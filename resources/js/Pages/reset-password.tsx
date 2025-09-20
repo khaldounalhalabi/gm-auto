@@ -1,12 +1,17 @@
 import Form from "@/Components/form/Form";
 import Input from "@/Components/form/fields/Input";
-import PageCard from "@/Components/ui/PageCard";
-import { asset } from "@/helper";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/Components/ui/shadcn/card";
 import { useForm } from "@inertiajs/react";
 import { FormEvent } from "react";
 
 const ResetPassword = () => {
-    const { post, setData, errors, processing } = useForm<{
+    const { post, setData, processing, transform } = useForm<{
         reset_password_code: string;
         password: string;
         password_confirmation: string;
@@ -14,82 +19,58 @@ const ResetPassword = () => {
 
     const onSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post(route("v1.web.public.reset.password"));
+        transform((data) => ({
+            ...data,
+            reset_password_code:
+                window.localStorage.getItem("password_reset_code") ?? "",
+        }));
+        post(route("v1.web.public.reset.password"), {
+            onSuccess: () => {
+                window.localStorage.removeItem("password_reset_code");
+            },
+            onError: (errors) => {
+                console.log(errors);
+            },
+        });
     };
     return (
-        <div className="grid grid-cols-3 my-20">
-            <div className="col-start-2 col-end-3">
-                <div className="flex flex-col items-center">
-                    <div className="flex items-center my-2 gap-1">
-                        <img
-                            src={asset("images/cubeta-logo.png")}
-                            width={"35px"}
-                        />
-                        <h1 className="text-brand text-4xl font-bold">
-                            Cubeta Starter
-                        </h1>
-                    </div>
-                    <PageCard>
-                        <div className="flex flex-col my-5">
-                            <div className="flex justify-center items-center">
-                                <h1 className="font-semibold text-3xl text-brand">
-                                    You Have 1 Step Left
-                                </h1>
-                            </div>
-                            <div className="flex justify-center items-center dark:text-white">
-                                <p>
-                                    Please enter your new password and your
-                                    reset code
-                                </p>
-                            </div>
-                        </div>
-                        <Form
-                            onSubmit={onSubmit}
-                            processing={processing}
-                            backButton={false}
-                        >
-                            <div className="flex flex-col gap-5">
-                                <Input
-                                    label="Password Reset Code"
-                                    name="reset_password_code"
-                                    type="text"
-                                    onChange={(e) => {
-                                        setData(
-                                            "reset_password_code",
-                                            e.target.value,
-                                        );
-                                    }}
-                                    required={true}
-                                />
+        <Card>
+            <CardHeader>
+                <CardTitle>You have 1 step left</CardTitle>
+                <CardDescription>
+                    Please enter your new password
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Form
+                    onSubmit={onSubmit}
+                    processing={processing}
+                    backButton={false}
+                >
+                    <Input
+                        label={"New Password"}
+                        name="password"
+                        type="password"
+                        onChange={(e) => {
+                            setData("password", e.target.value);
+                        }}
+                        required={true}
+                        autoComplete={"new-password"}
+                    />
 
-                                <Input
-                                    label="New Password"
-                                    name="password"
-                                    type="password"
-                                    onChange={(e) => {
-                                        setData("password", e.target.value);
-                                    }}
-                                    required={true}
-                                />
-
-                                <Input
-                                    label="Confirm Password"
-                                    name="password_confirmation"
-                                    type="password"
-                                    onChange={(e) => {
-                                        setData(
-                                            "password_confirmation",
-                                            e.target.value,
-                                        );
-                                    }}
-                                    required={true}
-                                />
-                            </div>
-                        </Form>
-                    </PageCard>
-                </div>
-            </div>
-        </div>
+                    <Input
+                        label={"Password Confirmation"}
+                        name="password_confirmation"
+                        type="password"
+                        onChange={(e) => {
+                            setData("password_confirmation", e.target.value);
+                        }}
+                        autoComplete={"new-password"}
+                        required={true}
+                    />
+                </Form>
+            </CardContent>
+        </Card>
     );
 };
 

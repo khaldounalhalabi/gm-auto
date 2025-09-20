@@ -1,20 +1,27 @@
-import {defineConfig} from 'vite';
-import laravel from 'laravel-vite-plugin';
-import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
+import laravel from "laravel-vite-plugin";
+import { defineConfig } from "vite";
 
 export default defineConfig({
     plugins: [
         laravel({
-            input: 'resources/js/cubeta-starter.tsx',
-            refresh: true,
+            input: "resources/js/cubeta-starter.tsx",
+            refresh: false,
         }),
-        viteReact(),
+        react(),
         tailwindcss(),
     ],
     resolve: {
         alias: {
-            '@': '/resources/js',
+            "@": "/resources/js",
+        },
+    },
+    server: {
+        watch: {
+            ignored: [
+                "**/*.php", // ignore all PHP files
+            ],
         },
     },
 });

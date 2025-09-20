@@ -1,56 +1,66 @@
-import React, { useState } from "react";
-import Navbar from "@/Components/ui/Navbar";
+import { ThemeProvider } from "@/Components/providers/ThemeProvider";
+import { SiteHeader } from "@/Components/site-header";
+import { SidebarInset, SidebarProvider } from "@/Components/ui/shadcn/sidebar";
+import { Toaster } from "@/Components/ui/shadcn/sonner";
 import { Sidebar } from "@/Components/ui/Sidebar";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { usePage } from "@inertiajs/react";
 import { MiddlewareProps } from "@/types";
+import { usePage } from "@inertiajs/react";
+import { registerPlugin } from "filepond";
+import FilePondPluginFilePoster from "filepond-plugin-file-poster";
+import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
+import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
+import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import React from "react";
+import { toast } from "sonner";
 
 const Layout = ({ children }: { children?: React.ReactNode }) => {
-  const theme = window.localStorage.getItem("theme_mode") ?? "light";
-  const [isOpen, setIsOpen] = useState(true);
-  const toggleSidebar = () => {
-    setIsOpen((prev) => !prev);
-  };
+    if (usePage<MiddlewareProps>().props.message) {
+        toast.info(usePage<MiddlewareProps>().props.message);
+        usePage<MiddlewareProps>().props.message = undefined;
+    }
 
-  if (usePage<MiddlewareProps>().props.message) {
-    toast.info(usePage<MiddlewareProps>().props.message);
-    usePage<MiddlewareProps>().props.message = undefined;
-  }
+    if (usePage<MiddlewareProps>().props.success) {
+        toast.success(usePage<MiddlewareProps>().props.success);
+        usePage<MiddlewareProps>().props.success = undefined;
+    }
 
-  if (usePage<MiddlewareProps>().props.success) {
-    toast.success(usePage<MiddlewareProps>().props.success);
-    usePage<MiddlewareProps>().props.success = undefined;
-  }
+    if (usePage<MiddlewareProps>().props.error) {
+        toast.error(usePage<MiddlewareProps>().props.error);
+        usePage<MiddlewareProps>().props.success = undefined;
+    }
 
-  if (usePage<MiddlewareProps>().props.error) {
-    toast.error(usePage<MiddlewareProps>().props.error);
-    usePage<MiddlewareProps>().props.success = undefined;
-  }
+    registerPlugin(
+        FilePondPluginImageExifOrientation,
+        FilePondPluginImagePreview,
+        FilePondPluginFileValidateType,
+        FilePondPluginFilePoster,
+    );
 
-  return (
-    <>
-      <div className={`flex max-h-screen overflow-y-scroll`}>
-        <ToastContainer
-          theme={theme}
-          rtl={usePage<MiddlewareProps>().props.currentLocale == "ar"}
-        />
-        <div
-          className={`bg-white-secondary dark:bg-dark-secondary h-screen shadow-lg ${
-            isOpen ? "slide-sidebar-right" : "slide-sidebar-left w-1/4"
-          }`}
-        >
-          <Sidebar isOpen={isOpen} toggleSidebar={toggleSidebar} />
-        </div>
-        <div
-          className={`dark:bg-dark h-screen w-full overflow-y-scroll bg-white`}
-        >
-          <Navbar isSidebarOpen={isOpen} toggleSidebar={toggleSidebar} />
-          <main className={"dark:bg-dark m-5 bg-white"}>{children}</main>
-        </div>
-      </div>
-    </>
-  );
+    return (
+        <ThemeProvider>
+            <SidebarProvider
+                style={
+                    {
+                        "--sidebar-width": "calc(var(--spacing) * 72)",
+                        "--header-height": "calc(var(--spacing) * 12)",
+                    } as React.CSSProperties
+                }
+            >
+                <Toaster />
+                <Sidebar variant="inset" side={"left"} />
+                <SidebarInset>
+                    <SiteHeader />
+                    <div className="flex flex-1 flex-col">
+                        <div className="@container/main flex flex-1 flex-col gap-2">
+                            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+                                {children}
+                            </div>
+                        </div>
+                    </div>
+                </SidebarInset>
+            </SidebarProvider>
+        </ThemeProvider>
+    );
 };
 
 export default Layout;

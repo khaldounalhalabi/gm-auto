@@ -2,30 +2,61 @@
 
 namespace App\Casts;
 
+use App\Serializers\SerializedMedia;
 use Exception;
-use GuzzleHttp\Psr7\MimeType;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class MediaCast implements CastsAttributes
 {
     public bool $withoutObjectCaching = true;
+    private readonly bool $private;
+
+    public function __construct(string $privateOrPublic = "public")
+    {
+        $this->private = $privateOrPublic == "private";
+    }
 
     /**
      * Cast the given value.
      * @param array<string, mixed> $attributes
+     * @throws Exception
      */
-    public function get(Model $model, string $key, mixed $value, array $attributes): mixed
+    public function get(Model $model, string $key, mixed $value, array $attributes): SerializedMedia|array|null
     {
-        if (is_string($value) || Str::isJson($value)) {
-            return json_decode($value, true);
+        if (is_null($value)) {
+            return null;
         }
 
-        return $value;
+        $data = json_decode($value, true);
+
+        if (!is_array($data)) {
+            throw new Exception("Invalid stored data in the media column [$key] , table : {$model->getTable()}");
+        }
+
+        if (SerializedMedia::isMediaArray($data)) {
+            $file = new SerializedMedia($data, $model->getTable(), $this->private);
+            if (!$file->exists()) {
+                return null;
+            }
+            return $file;
+        }
+
+        return array_values(
+            array_values(
+                array_map(function (array $item) use ($model) {
+                    $file = new SerializedMedia($item, $model->getTable(), $this->private);
+                    if (!$file->exists()) {
+                        return null;
+                    }
+                    return $file;
+                }, $data
+                )
+            )
+        );
     }
 
     /**
@@ -36,66 +67,61 @@ class MediaCast implements CastsAttributes
     public function set(Model $model, string $key, mixed $value, array $attributes): string|null|false
     {
         if (is_null($value)) {
-            self::deleteFiles($model->{$key});
+            $model->{$key}?->delete();
             return null;
         }
 
-        $paths = $this->handleFileStoring($value, $model);
-        if (is_string($paths)) {
-            return json_encode($this->format($paths));
-        } elseif (is_array($paths)) {
-            foreach ($paths as $key => $item) {
-                $paths[$key] = $this->format($item);
+        if (Str::isJson($value)) {
+            $value = json_decode($value, true);
+        }
+
+        if ($value instanceof SerializedMedia) {
+            if (!$value->exists()) {
+                return null;
             }
-            return json_encode($paths, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        } elseif (!$paths) {
-            return null;
-        }
-        throw new Exception("Invalid Media Value");
-    }
 
-    private function format(string $value): array
-    {
-        $fullPath = storage_path("app/public/" . trim($value, '/'));
-        $fileExists = file_exists($fullPath);
-        $extension = File::extension($fullPath);
-        return [
-            'url' => asset("storage/$value"),
-            'size' => $fileExists ? round(filesize($fullPath) / 1024) : 0,
-            'extension' => $extension,
-            'mime_type' => $fileExists ? MimeType::fromExtension($extension) : "unknown",
-        ];
-    }
-
-    private function handleFileStoring(UploadedFile|array $value, Model $model): array|string|null
-    {
-        $images = [];
-
-        $isArray = is_array($value);
-        /** @var UploadedFile[] $files */
-        $files = Arr::wrap($value);
-
-        foreach ($files as $file) {
-            $images[] = $this->storeFile($file, $model->getTable());
+            return $value->toJson();
         }
 
-        return $isArray
-            ? $images
-            : (count($images) > 0
-                ? $images[0]
-                : null
-            );
-    }
-
-    public function storeFile(UploadedFile $file, $dir): string
-    {
-        $directory = storage_path("app/public/$dir");
-        if (!is_dir($directory)) {
-            File::makeDirectory(storage_path("app/public/$dir"), 0777, true);
+        if ($value instanceof UploadedFile) {
+            $file = new SerializedMedia($value, $model->getTable(), $this->private);
+            if (!$file->exists()) {
+                return null;
+            }
+            return $file->toJson();
         }
-        return $file->store($dir, [
-            'disk' => 'public',
-        ]);
+
+        if (is_array($value) && SerializedMedia::isMediaArray($value)) {
+            $file = new SerializedMedia($value, $model->getTable(), $this->private);
+            if (!$file->exists()) {
+                return null;
+            }
+            return $file->toJson();
+        }
+
+        if (!is_array($value)) {
+            throw ValidationException::withMessages([
+                $key => [
+                    "Invalid stored data in the media column [$key]"
+                ]
+            ]);
+        }
+
+        $stored = [];
+        foreach ($value as $item) {
+            if (SerializedMedia::isMediaArray($item) || $item instanceof UploadedFile) {
+                $file = new SerializedMedia($item, $model->getTable(), $this->private);
+                if (!$file->exists()) {
+                    $stored[] = $file->toArray();
+                }
+            } elseif ($item instanceof SerializedMedia) {
+                if ($item->exists()) {
+                    $stored[] = $item->toArray();
+                }
+            }
+        }
+
+        return json_encode($stored, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
     private static function deleteFileByUrl(string $url): void

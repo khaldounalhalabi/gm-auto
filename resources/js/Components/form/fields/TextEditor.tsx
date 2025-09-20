@@ -1,42 +1,41 @@
-import React from "react";
+import TiptapEditor from "@/Components/form/fields/tiptap/TiptapEditor";
+import { Label } from "@/Components/ui/shadcn/label";
+import { MiddlewareProps } from "@/types";
 import { usePage } from "@inertiajs/react";
+import { Editor } from "@tiptap/react";
+import React from "react";
 
-export interface TextEditorProps extends React.ComponentProps<"textarea"> {
-  name: string;
-  label?: string;
-  className?: string;
-  required?: boolean;
+export interface TextEditorProps {
+    name: string;
+    label?: string;
+    required?: boolean;
+    onChange?: (value: string) => void;
+    defaultValue?: string;
+    extraButtons?: (editor: Editor) => React.ReactNode;
 }
 
 const TextEditor: React.FC<TextEditorProps> = ({
-  name,
-  label,
-  className,
-  required = false,
-  ...props
+    name,
+    label,
+    required = false,
+    onChange,
+    defaultValue,
+    extraButtons,
 }) => {
-  const errors = usePage().props.errors;
-  const error = name && errors[name] ? errors[name] : undefined;
+    const { errors, can_use_ai: withAi } = usePage<MiddlewareProps>().props;
+    const error = name && errors[name] ? errors[name] : undefined;
 
-  return (
-    <div className={className ?? ""}>
-      <label className={"dark:text-white"}>
-        {label}
-        {required ? <span className="text-sm text-red-500">*</span> : ""}
-        <textarea
-          id="OrderNotes"
-          className={
-            className ??
-            "dark:bg-dark-secondary w-full rounded-lg border-gray-200 align-top shadow-sm sm:text-sm"
-          }
-          rows={4}
-          name={name ?? ""}
-          {...props}
-        />
-      </label>
-      {error ? <p className={"text-sm text-red-700"}>{error}</p> : ""}
-    </div>
-  );
+    return (
+        <Label className={"flex flex-col items-start"}>
+            <span>{label}</span>
+            <TiptapEditor
+                extraButtons={extraButtons}
+                onChange={onChange}
+                defaultValue={defaultValue}
+            />
+            {error && <p className={"text-sm text-destructive"}>{error}</p>}
+        </Label>
+    );
 };
 
 export default TextEditor;

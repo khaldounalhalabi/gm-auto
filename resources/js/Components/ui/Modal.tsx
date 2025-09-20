@@ -1,60 +1,67 @@
-import React, { ReactNode, useEffect, useState } from "react";
-import ReactDOM from "react-dom";
-import XMark from "@/Components/icons/XMark";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/Components/ui/shadcn/dialog";
+import { ReactNode, useEffect, useState } from "react";
 
 const Modal = ({
-  isOpen,
-  onClose,
-  children,
+    isOpen,
+    onClose,
+    children,
+    trigger,
+    title,
+    description,
+    footer,
 }: {
-  isOpen: boolean;
-  onClose: () => void;
-  children: ReactNode;
+    isOpen?: boolean;
+    onClose?: () => void;
+    children?: ReactNode;
+    trigger?: ReactNode | (() => ReactNode);
+    title?: string;
+    description?: string;
+    footer?: ReactNode | (() => ReactNode);
 }) => {
-  const [show, setShow] = useState(isOpen);
+    const [show, setShow] = useState(isOpen ?? false);
 
-  useEffect(() => {
-    if (isOpen) {
-      setShow(true);
-    } else {
-      const timeout = setTimeout(() => setShow(false), 300); // Duration should match the transition duration
-      return () => clearTimeout(timeout);
-    }
-  }, [isOpen]);
+    const onOpenChange = (state: boolean) => {
+        if (!state && onClose) {
+            onClose();
+        }
+        setShow(state);
+    };
 
-  if (!show) return null;
+    useEffect(() => {
+        if (isOpen != undefined) {
+            setShow(isOpen);
+        }
+    }, [isOpen]);
 
-  return ReactDOM.createPortal(
-    <div
-      className={`fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-300 ${
-        isOpen ? "opacity-100" : "opacity-0"
-      }`}
-    >
-      <div
-        className={`fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ${
-          isOpen ? "opacity-50" : "opacity-0"
-        }`}
-        onClick={onClose}
-      ></div>
-      <div
-        className={`dark:bg-dark-secondary w-full max-w-lg transform overflow-hidden rounded-lg bg-white shadow-lg transition-transform duration-300 ${
-          isOpen ? "scale-100" : "scale-95"
-        }`}
-      >
-        <div className="flex justify-end p-2">
-          <button
-            onClick={onClose}
-            className="cursor-pointer text-gray-500 hover:text-gray-700"
-            aria-label="Close"
-          >
-            <XMark />
-          </button>
-        </div>
-        <div className="p-4">{children}</div>
-      </div>
-    </div>,
-    document.body,
-  );
+    return (
+        <Dialog open={show} onOpenChange={onOpenChange}>
+            {trigger && (
+                <DialogTrigger asChild>
+                    {typeof trigger == "function" ? trigger() : trigger}
+                </DialogTrigger>
+            )}
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>{title ?? ""}</DialogTitle>
+                    <DialogDescription>{description ?? ""}</DialogDescription>
+                </DialogHeader>
+                {children}
+                {footer && (
+                    <DialogFooter>
+                        {typeof footer == "function" ? footer() : footer}
+                    </DialogFooter>
+                )}
+            </DialogContent>
+        </Dialog>
+    );
 };
 
 export default Modal;

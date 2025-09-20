@@ -3,13 +3,13 @@
         "allowJs": true,
         "module": "ESNext",
         "moduleResolution": "bundler",
-        "jsx": "react-jsx",
         "strict": true,
         "isolatedModules": true,
         "target": "ESNext",
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
         "noEmit": true,
+        "baseUrl": ".",
         "paths": {
             "@/*": [
                 "./resources/js/*"
@@ -17,7 +17,8 @@
             "ziggy-js": [
                 "./vendor/tightenco/ziggy"
             ]
-        }
+        },
+        "jsx": "react-jsx"
     },
     "include": [
         "resources/js/**/*.ts",

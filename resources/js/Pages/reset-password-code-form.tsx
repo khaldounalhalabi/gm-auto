@@ -1,70 +1,57 @@
 import Form from "@/Components/form/Form";
 import Input from "@/Components/form/fields/Input";
-import PageCard from "@/Components/ui/PageCard";
-import { asset } from "@/helper";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/Components/ui/shadcn/card";
 import { useForm } from "@inertiajs/react";
 import { FormEvent } from "react";
 
 const ResetPasswordCodeForm = () => {
-    const { post, setData, errors, processing } = useForm<{
+    const { post, setData, processing, data } = useForm<{
         reset_password_code: string;
     }>();
 
     const onSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post(route("v1.web.public.validate.reset.password.code"));
+        post(route("v1.web.public.validate.reset.password.code"), {
+            onSuccess: () => {
+                window.localStorage.setItem(
+                    "password_reset_code",
+                    data?.reset_password_code,
+                );
+            },
+        });
     };
     return (
-        <div className="grid grid-cols-3 my-20">
-            <div className="col-start-2 col-end-3">
-                <div className="flex flex-col items-center">
-                    <div className="flex items-center my-2 gap-1">
-                        <img
-                            src={asset("images/cubeta-logo.png")}
-                            width={"35px"}
-                        />
-                        <h1 className="text-brand text-4xl font-bold">
-                            Cubeta Starter
-                        </h1>
-                    </div>
-                    <PageCard>
-                        <div className="flex flex-col my-5">
-                            <div className="flex justify-center items-center">
-                                <h1 className="font-semibold text-2xl text-brand text-center">
-                                    Please Check Your Email For An Email From Us
-                                    !
-                                </h1>
-                            </div>
-                            <div className="flex justify-center items-center">
-                                <p className={"dark:text-white"}>
-                                    Enter the reset code sent within the email
-                                    below
-                                </p>
-                            </div>
-                        </div>
-                        <Form
-                            backButton={false}
-                            buttonText="Submit Code"
-                            onSubmit={onSubmit}
-                            processing={processing}
-                        >
-                            <Input
-                                label="Password Reset Code"
-                                name={"reset_password_code"}
-                                required={true}
-                                onChange={(e) => {
-                                    setData(
-                                        "reset_password_code",
-                                        e.target.value,
-                                    );
-                                }}
-                                type="text"
-                            />
-                        </Form>
-                    </PageCard>
-                </div>
-            </div>
-        </div>
+        <Card>
+            <CardHeader>
+                <CardTitle>Please check your email form a message from us !</CardTitle>
+                <CardDescription>Enter the reset code received within the email below</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Form
+                    backButton={false}
+                    buttonText={"Submit the code"}
+                    onSubmit={onSubmit}
+                    processing={processing}
+                >
+                    <Input
+                        label={"Password Reset Code"}
+                        name={"reset_password_code"}
+                        required={true}
+                        onChange={(e) => {
+                            setData("reset_password_code", e.target.value);
+                        }}
+                        type="text"
+                        placeholder={"code ...."}
+                    />
+                </Form>
+            </CardContent>
+        </Card>
     );
 };
 
