@@ -6,7 +6,7 @@ import React, { ReactNode } from "react";
 
 const sidebarItems = [
     {
-        href: route("v1.web.public.index"),
+        href: route("v1.web.protected.index"),
         title: "Dashboard",
         icon: () => <PresentationChart />,
     },

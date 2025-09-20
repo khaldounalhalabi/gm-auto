@@ -1,5 +1,6 @@
 {
     "installed_web": true,
     "frontend_type": "React & Typescript",
-    "installed_web_packages": true
+    "installed_web_packages": true,
+    "installed_web_auth": true
 }

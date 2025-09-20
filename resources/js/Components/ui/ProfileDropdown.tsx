@@ -55,7 +55,7 @@ const ProfileDropdown = () => {
           <li>
             <Link
               id="user-details"
-              href={"#"}
+               href={route('v1.web.protected.me')} 
               className="block cursor-pointer rounded-md p-2 hover:bg-gray-50 dark:hover:text-black"
             >
               My Profile
@@ -64,7 +64,7 @@ const ProfileDropdown = () => {
           <li>
             <Link
               id="logout"
-              href={"#"}
+               href={route('v1.web.protected.logout')} 
               className="block cursor-pointer rounded-md p-2 hover:bg-gray-50 dark:hover:text-black"
             >
               Sign Out
