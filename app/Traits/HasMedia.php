@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Traits;
+
+use App\Casts\MediaCast;
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * @mixin Model
+ */
+trait HasMedia
+{
+    protected static function boot(): void
+    {
+        parent::boot();
+        self::deleted(function (Model $model) {
+            $mediaKeys = $model->getCasts();
+            foreach ($mediaKeys as $attribute => $mediaKey) {
+                if ($mediaKey == MediaCast::class) {
+                    MediaCast::deleteFiles($model->{$attribute});
+                }
+            }
+        });
+    }
+}

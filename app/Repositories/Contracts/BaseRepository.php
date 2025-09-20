@@ -1,0 +1,348 @@
+<?php
+
+namespace App\Repositories\Contracts;
+
+use App\Excel\BaseExporter;
+use App\Excel\BaseImporter;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection as RegularCollection;
+use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Exception;
+use PhpOffice\PhpSpreadsheet\Writer\Exception as SpreadSheetException;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+
+/**
+ * @template MODEL of Model
+ */
+abstract class BaseRepository
+{
+    protected string $modelClass = Model::class;
+
+    private static $instance;
+
+    protected Model $model;
+
+    private array $modelTableColumns;
+
+    private array $filterKeys = [];
+
+    private array $relationSearchableKeys = [];
+
+    private array $searchableKeys = [];
+
+    private string $tableName;
+
+    public function __construct()
+    {
+        $this->model = new $this->modelClass;
+        $this->tableName = $this->model->getTable();
+
+        if (method_exists($this->model, 'searchableArray')) {
+            $this->searchableKeys = $this->model->searchableArray();
+        }
+
+        if (method_exists($this->model, 'relationsSearchableArray')) {
+            $this->relationSearchableKeys = $this->model->relationsSearchableArray();
+        }
+
+        if (method_exists($this->model, 'filterArray')) {
+            $this->filterKeys = $this->model->filterArray();
+        }
+
+        $this->modelTableColumns = $this->getTableColumns();
+    }
+
+    public static function make(): static
+    {
+        if (is_null(self::$instance)) {
+            self::$instance = new static;
+        } elseif (! (self::$instance instanceof static)) {
+            self::$instance = new static;
+        }
+
+        return self::$instance;
+    }
+
+    public function getTableColumns(): array
+    {
+        return $this->model->getFillable();
+    }
+
+    /**
+     * @return Collection<MODEL>|RegularCollection<MODEL>|MODEL[]
+     */
+    public function all(array $relationships = []): Collection|array|RegularCollection
+    {
+        return $this->globalQuery($relationships)->get();
+    }
+
+    /**
+     * @return Builder|MODEL
+     */
+    public function globalQuery(array $relations = []): Builder
+    {
+        $query = $this->model->with($relations);
+
+        if (request()->method() == 'GET') {
+            $query = $query->where(function (Builder $builder) {
+                return $this->filterFields($builder);
+            });
+            $query = $query->where(function ($q) {
+                return $this->addSearch($q);
+            });
+            $query = $this->orderQueryBy($query);
+        }
+
+        return $query;
+    }
+
+    private function addSearch($query): mixed
+    {
+        if (request()->has('search')) {
+            $keyword = request()->search;
+
+            if (count($this->searchableKeys) > 0) {
+                foreach ($this->searchableKeys as $search_attribute) {
+                    $query->orWhere($search_attribute, 'LIKE', "%{$keyword}%");
+                }
+            }
+
+            if (count($this->relationSearchableKeys) > 0) {
+
+                foreach ($this->relationSearchableKeys as $relation => $values) {
+
+                    foreach ($values as $key => $search_attribute) {
+                        $query->orWhereHas($relation, function ($q) use ($keyword, $search_attribute) {
+                            $q->where($search_attribute, 'LIKE', "%{$keyword}%");
+                        });
+                    }
+                }
+            }
+            $query->orWhere('id', $keyword);
+        }
+
+        return $query;
+    }
+
+    /**
+     * this function implement already defined filters in the model
+     *
+     * @return Builder|MODEL
+     */
+    private function filterFields(Builder $query): Builder
+    {
+        foreach ($this->filterKeys as $filterFields) {
+            $field = $filterFields['field'] ?? $filterFields['name'];
+            $operator = $filterFields['operator'] ?? '=';
+            $relation = $filterFields['relation'] ?? null;
+            $method = $filterFields['method'] ?? 'where';
+            $callback = $filterFields['query'] ?? null;
+            $value = request($field);
+            $range = is_array($value);
+            $value = $this->unsetEmptyParams($value);
+            if ($range && isset($value)) {
+                $value = array_values($value);
+            }
+
+            if (! $value) {
+                continue;
+            }
+
+            if ($callback && is_callable($callback)) {
+                $query = call_user_func($callback, $query, $value);
+            } elseif ($relation) {
+                $tables = explode('.', $relation);
+                $col = $tables[count($tables) - 1];
+                unset($tables[count($tables) - 1]);
+                $relation = implode('.', $tables);
+
+                $query = $query->whereRelation($relation, function (Builder $q) use ($col, $range, $method, $operator, $value) {
+                    $relTable = $q->getModel()->getTable();
+                    if ($range) {
+                        return $this->handleRangeQuery($value, $q, $relTable, $col);
+                    }
+                    if ($operator === 'like') {
+                        return $q->{$method}("$relTable.$col", $operator, '%'.$value.'%');
+                    }
+
+                    return $q->{$method}("$relTable.$col", $operator, $value);
+                });
+            } else {
+                if ($range) {
+                    $query = $this->handleRangeQuery($value, $query, $this->tableName, $field);
+                } elseif ($operator == 'like') {
+                    $query = $query->{$method}($this->tableName.'.'.$field, $operator, '%'.$value.'%');
+                } else {
+                    $query = $query->{$method}($this->tableName.'.'.$field, $operator, $value);
+                }
+            }
+        }
+
+        return $query;
+    }
+
+    /**
+     * @return Builder|MODEL
+     */
+    private function orderQueryBy($query): mixed
+    {
+        $sortColumns = request()->sort_col;
+        if (isset($sortColumns)) {
+            if (is_array(request()->sort_col)) {
+                foreach ($sortColumns as $col => $dir) {
+                    if (in_array($col, $this->modelTableColumns)) {
+                        $query->orderBy($col, $dir);
+                    }
+                }
+            } elseif (in_array(request()->sort_col, $this->modelTableColumns)) {
+                $query->orderBy(request()->sort_col, request()->sort_dir ?? 'asc');
+            }
+
+            return $query;
+        }
+
+        return $query->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * @return LengthAwarePaginator<int, MODEL>
+     */
+    public function allWithPagination(array $relationships = [], int $per_page = 10): LengthAwarePaginator
+    {
+        $per_page = request('limit') ?? $per_page;
+
+        return $this->globalQuery($relationships)->paginate($per_page);
+    }
+
+    public function create(array $data, array $relationships = []): Model
+    {
+        $result = $this->model->create($data);
+        $result->refresh();
+
+        return $result->load($relationships);
+    }
+
+    public function delete(string|int|Model $id): ?bool
+    {
+        if ($id instanceof Model) {
+            $result = $id;
+        } else {
+            $result = $this->modelClass::find($id);
+        }
+
+        return $result?->delete();
+    }
+
+    public function find($id, array $relationships = []): ?Model
+    {
+        $result = $this->model->with($relationships)->find($id);
+
+        if ($result) {
+            return $result;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param  string|int|Model|MODEL  $id
+     * @return MODEL|null|Model
+     */
+    public function update(array $data, string|int|Model $id, array $relationships = []): ?Model
+    {
+        if ($id instanceof Model) {
+            $item = $id;
+        } else {
+            $item = $this->modelClass::find($id);
+        }
+
+        if (! $item) {
+            return null;
+        }
+
+        $item->update($data);
+
+        return $item->refresh()->load($relationships);
+    }
+
+    /**
+     * @param  mixed  $value
+     * @return Builder|MODEL
+     */
+    private function handleRangeQuery(array $value, Builder $query, string $table, string $column): Builder
+    {
+        if (count($value) == 2) {
+            if (! isset($value[0]) && isset($value[1])) {
+                $query = $query->where("$table.$column", '<=', $value[1]);
+            } elseif (isset($value[0]) && ! isset($value[1])) {
+                $query->where("$table.$column", '>=', $value[0]);
+            } elseif (isset($value[0]) && isset($value[1])) {
+                $query = $query->where("$table.$column", '>=', $value[0])
+                    ->where("$table.$column", '<=', $value[1]);
+            }
+        } elseif (count($value) > 2) {
+            $query->whereIn("$table.$column", array_values(array_filter($value)));
+        }
+
+        return $query;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function export(array $ids = []): BinaryFileResponse
+    {
+        if (! count($ids)) {
+            $collection = $this->globalQuery()->get();
+        } else {
+            $collection = $this->globalQuery()->whereIn('id', $ids)->get();
+        }
+
+        $requestedColumns = request('columns') ?? null;
+
+        return Excel::download(
+            new BaseExporter($collection, $this->model, $requestedColumns),
+            $this->model->getTable().'.xlsx',
+        );
+    }
+
+    /**
+     * @throws SpreadSheetException
+     * @throws Exception
+     */
+    public function getImportExample(): BinaryFileResponse
+    {
+        return Excel::download(
+            new BaseExporter(collect(), $this->model, null, true),
+            $this->model->getTable().'-example.xlsx'
+        );
+    }
+
+    public function import(): void
+    {
+        Excel::import(new BaseImporter($this->model), request()->file('excel_file'));
+    }
+
+    protected function unsetEmptyParams(string|array|null $param = null): string|array|null
+    {
+        if (! $param) {
+            return null;
+        }
+        if (is_array($param)) {
+            foreach ($param as $value) {
+                if (strlen(trim(preg_replace('/\s+/', '', $value))) != 0) {
+                    return $param;
+                }
+            }
+
+            return null;
+        } elseif (strlen(trim(preg_replace('/\s+/', '', $param))) == 0) {
+            return null;
+        } else {
+            return $param;
+        }
+    }
+}

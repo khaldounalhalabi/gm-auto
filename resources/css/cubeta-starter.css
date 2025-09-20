@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+@source inline("{hover:,focus:,}bg-{brand,primary,secondary,success,info,warning,danger,white,black,white-secondary,dark,dark-secondary}");
+@source inline("{hover:,focus:,}border-{brand,primary,secondary,success,info,warning,danger,white,black,white-secondary,dark,dark-secondary}");
+@source inline("{hover:,focus:,}text-{brand,primary,secondary,success,info,warning,danger,white,black,white-secondary,dark,dark-secondary}");
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@plugin '@tailwindcss/forms';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+    :root {
+        --color-brand: #012970;
+        --color-primary: #0D6EFD;
+        --color-secondary: #6c757d;
+        --color-success: #198754;
+        --color-info: #0dcaf0;
+        --color-warning: #ffc107;
+        --color-danger: #dc3545;
+        --color-white: #ffffff;
+        --color-black: #000000;
+        --color-white-secondary: #fafafa;
+        --color-dark: #030B12;
+        --color-dark-secondary: #061523;
+    }
+
+    :root[class~="dark"] {
+        --color-brand: #89A9E0;
+        --color-primary: #176097;
+        --color-secondary: #495057;
+        --color-success: #1EC289;
+        --color-info: #21C5D4;
+        --color-warning: #E2D73C;
+        --color-danger: #E34F4F;
+        --color-white: #ffffff;
+        --color-white-secondary: #fafafa;
+        --color-black: #000000;
+        --color-dark: #030B12;
+        --color-dark-secondary: #061523;
+        --toastify-color-dark: #061523
+    }
+}
+
+@theme {
+    --color-brand: var(--color-brand);
+    --color-primary: var(--color-primary);
+    --color-secondary: var(--color-secondary);
+    --color-success: var(--color-success);
+    --color-info: var(--color-info);
+    --color-warning: var(--color-warning);
+    --color-danger: var(--color-danger);
+    --color-white: var(--color-white);
+    --color-white-secondary: var(--color-white-secondary);
+    --color-black: var(--color-black);
+    --color-dark: var(--color-dark);
+    --color-dark-secondary: var(--color-dark-secondary);
+
+    --font-sans: "Poppins", sans-serif;
+}
+
+body {
+    font-family: "Poppins", sans-serif !important;
+}
+
+::-webkit-scrollbar {
+    @apply w-[2px]
+}
+
+::-webkit-scrollbar-track {
+    @apply shadow-md
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-md
+}
+
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary
+}
+
+.slide-sidebar-left {
+    -webkit-animation: slide-sidebar-left 0.3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+    animation: slide-sidebar-left 0.3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+@-webkit-keyframes slide-sidebar-left {
+    0% {
+        width: 25%
+    }
+    100% {
+        width: 7%
+    }
+}
+
+@keyframes slide-sidebar-left {
+    0% {
+        width: 25%
+    }
+    100% {
+        width: 7%
+    }
+}
+
+.slide-sidebar-right {
+    -webkit-animation: slide-sidebar-right 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+    animation: slide-sidebar-right 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+}
+
+@-webkit-keyframes slide-sidebar-right {
+    0% {
+        width: 7%
+    }
+    100% {
+        width: 25%
+    }
+}
+
+@keyframes slide-sidebar-right {
+    0% {
+        width: 7%
+    }
+    100% {
+        width: 25%
+    }
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+}
+
+.swal2-popup {
+    @apply dark:bg-dark-secondary dark:text-white
+}
