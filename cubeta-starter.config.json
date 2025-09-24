@@ -2,5 +2,42 @@
     "installed_web": true,
     "frontend_type": "React & Typescript",
     "installed_web_packages": true,
-    "installed_web_auth": true
+    "installed_web_auth": true,
+    "tables": [
+        {
+            "model_name": "Client",
+            "table_name": "clients",
+            "attributes": [
+                {
+                    "name": "full_name",
+                    "type": "string",
+                    "nullable": false,
+                    "unique": false
+                },
+                {
+                    "name": "phone",
+                    "type": "string",
+                    "nullable": false,
+                    "unique": true
+                }
+            ],
+            "relations": {
+                "hasMany": [
+                    {
+                        "type": "hasMany",
+                        "model_name": "Car"
+                    },
+                    {
+                        "type": "hasMany",
+                        "model_name": "Visit"
+                    },
+                    {
+                        "type": "hasMany",
+                        "model_name": "MotTest"
+                    }
+                ]
+            },
+            "version": "v1"
+        }
+    ]
 }

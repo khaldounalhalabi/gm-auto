@@ -10,19 +10,15 @@ use Illuminate\Support\Facades\Route;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        commands: __DIR__.'/../routes/console.php',
+        web: __DIR__ . '/../routes/web.php',
+        commands: __DIR__ . '/../routes/console.php',
         health: '/up',
         then: function () {
-
-            Route::middleware(['web',
-                'locale',
-            ])
+            Route::middleware(['web', 'locale'])
                 ->group(base_path('routes\v1\web\public.php'));
 
             Route::middleware(['web', 'locale', 'authenticated:web'])
                 ->group(base_path('routes\v1\web\protected.php'));
-
         }
     )
     ->withMiddleware(function (Middleware $middleware): void {

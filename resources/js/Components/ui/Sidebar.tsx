@@ -12,7 +12,7 @@ import {
 import { MiddlewareProps } from "@/types";
 import { Link, usePage } from "@inertiajs/react";
 import { type Icon } from "@tabler/icons-react";
-import { BadgePlus } from "lucide-react";
+import { BadgePlus, Car, UserIcon } from "lucide-react";
 import React from "react";
 
 export function Sidebar({
@@ -27,7 +27,13 @@ export function Sidebar({
             href?: string;
             icon?: Icon;
         }[];
-    }[] = [];
+    }[] = [
+        {
+            title: "Clients",
+            href: route("v1.web.protected.clients.index"),
+            icon: () => <UserIcon />,
+        },
+    ];
 
     const { authUser } = usePage<MiddlewareProps>().props;
     return (
@@ -40,9 +46,9 @@ export function Sidebar({
                             className="data-[slot=sidebar-menu-button]:!p-1.5"
                         >
                             <Link href={route("v1.web.protected.index")}>
-                                <BadgePlus className="!size-5" />
+                                <Car className="!size-6" />
                                 <span className="text-base font-semibold">
-                                    LMS Dashboard
+                                    GM Auto
                                 </span>
                             </Link>
                         </SidebarMenuButton>
