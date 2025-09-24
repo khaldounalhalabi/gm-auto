@@ -38,6 +38,33 @@
                 ]
             },
             "version": "v1"
+        },
+        {
+            "model_name": "CarBrand",
+            "table_name": "car_brands",
+            "attributes": [
+                {
+                    "name": "name",
+                    "type": "string",
+                    "nullable": false,
+                    "unique": true
+                },
+                {
+                    "name": "image_url",
+                    "type": "string",
+                    "nullable": true,
+                    "unique": false
+                }
+            ],
+            "relations": {
+                "hasMany": [
+                    {
+                        "type": "hasMany",
+                        "model_name": "Car"
+                    }
+                ]
+            },
+            "version": "v1"
         }
     ]
 }

@@ -14,3 +14,9 @@ Route::post('/v1/clients/import', [v1\ClientController::class, 'import'])->name(
 Route::get('/v1/clients/get-import-example', [v1\ClientController::class, 'getImportExample'])->name('v1.web.protected.clients.import.example');
 Route::get('/v1/clients/data', [v1\ClientController::class, 'data'])->name('v1.web.protected.clients.data');
 Route::resource('/v1/clients', v1\ClientController::class)->names('v1.web.protected.clients');
+
+Route::post('/v1/car-brands/export', [v1\CarBrandController::class, 'export'])->name('v1.web.protected.car.brands.export');
+Route::post('/v1/car-brands/import', [v1\CarBrandController::class, 'import'])->name('v1.web.protected.car.brands.import');
+Route::get('/v1/car-brands/get-import-example', [v1\CarBrandController::class, 'getImportExample'])->name('v1.web.protected.car.brands.import.example');
+Route::get('/v1/car-brands/data', [v1\CarBrandController::class, 'data'])->name('v1.web.protected.car.brands.data');
+Route::resource('/v1/car-brands', v1\CarBrandController::class)->names('v1.web.protected.car.brands');

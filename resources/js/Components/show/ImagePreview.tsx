@@ -1,13 +1,18 @@
+import { Badge } from "@/Components/ui/shadcn/badge";
 import React, { HTMLProps, useState } from "react";
 
 interface ImgProps
     extends Omit<HTMLProps<HTMLImageElement>, "className" | "alt"> {
     caption?: string;
-    src: string;
+    src?: string;
 }
 
 const ImagePreview: React.FC<ImgProps> = ({ caption, src, ...props }) => {
     const [isExpanded, setIsExpanded] = useState(false);
+
+    if (!src) {
+        return <Badge>No Image</Badge>;
+    }
 
     return (
         <div

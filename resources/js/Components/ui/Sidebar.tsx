@@ -1,3 +1,4 @@
+import TableCells from "@/Components/icons/TableCells";
 import { NavMain } from "@/Components/nav-main";
 import { NavUser } from "@/Components/nav-user";
 import {
@@ -11,8 +12,8 @@ import {
 } from "@/Components/ui/shadcn/sidebar";
 import { MiddlewareProps } from "@/types";
 import { Link, usePage } from "@inertiajs/react";
-import { type Icon } from "@tabler/icons-react";
-import { BadgePlus, Car, UserIcon } from "lucide-react";
+import { type Icon, IconBrand4chan } from "@tabler/icons-react";
+import { Car, UserIcon } from "lucide-react";
 import React from "react";
 
 export function Sidebar({
@@ -32,6 +33,11 @@ export function Sidebar({
             title: "Clients",
             href: route("v1.web.protected.clients.index"),
             icon: () => <UserIcon />,
+        },
+        {
+            title: "Cars brands",
+            href: route("v1.web.protected.car.brands.index"),
+            icon: () => <IconBrand4chan />,
         },
     ];
 
