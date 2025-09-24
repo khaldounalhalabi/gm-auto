@@ -19,6 +19,7 @@ class ClientResource extends BaseResource
             'id' => $this->id,
             'full_name' => $this->full_name,
             'phone' => $this->phone,
+            'cars' => CarResource::collection($this->whenLoaded('cars')),
         ];
     }
 }

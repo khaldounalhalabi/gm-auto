@@ -11,7 +11,6 @@ class CarBrandResource extends BaseResource
 {
     /**
      * Transform the resource into an array.
-     *
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array
@@ -20,6 +19,7 @@ class CarBrandResource extends BaseResource
             'id' => $this->id,
             'name' => $this->name,
             'image_url' => $this->image_url,
+            'cars' => CarResource::collection($this->whenLoaded('cars')),
         ];
     }
 }

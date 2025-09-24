@@ -72,6 +72,7 @@ export interface IApiSelectProps<TResponse, TData> {
             | ((items: TData[]) => void)
             | ((state: (prev: TData) => TData) => void),
     ) => Promise<void>;
+    renderItem?: (item: TData, option: Option, index: number) => ReactNode;
 }
 
 export interface ISelectProps<TData> {

@@ -5,17 +5,20 @@ namespace App\Models;
 use Carbon\Carbon;
 use Database\Factories\CarBrandFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property int         $id
- * @property string      $name
- * @property string|null $image_url
- * @property Carbon      $created_at
- * @property Carbon      $updated_at
+ * @property int                          $id
+ * @property string                       $name
+ * @property string|null                  $image_url
+ * @property Carbon                       $created_at
+ * @property Carbon                       $updated_at
  * @mixin Builder<CarBrand>
  * @use  HasFactory<CarBrandFactory>
+ * @property EloquentCollection<Car>|null $cars
  */
 class CarBrand extends Model
 {
@@ -65,7 +68,18 @@ class CarBrand extends Model
     public static function relationsSearchableArray(): array
     {
         return [
-
+            'cars' => [
+                'model_name',
+                'registration_plate',
+            ],
         ];
+    }
+
+    /**
+     * @return  HasMany<Car, static>
+     */
+    public function cars(): HasMany
+    {
+        return $this->hasMany(Car::class);
     }
 }

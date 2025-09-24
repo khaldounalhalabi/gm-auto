@@ -41,6 +41,7 @@ function ApiSelect<TResponse, TData>({
     required = false,
     creatable,
     onCreatePress,
+    renderItem = undefined,
 }: IApiSelectProps<TResponse, TData>) {
     const errors = usePage().props.errors;
     const error = name && errors[name] ? errors[name] : undefined;
@@ -365,7 +366,9 @@ function ApiSelect<TResponse, TData>({
                             } ${styles?.dropDownItemClasses ?? "my-1 w-full cursor-pointer rounded-md p-2 hover:bg-foreground text-primary hover:text-secondary"}`}
                             onClick={(e) => handleChoseItem(e, item)}
                         >
-                            {getOption(item).label ?? ""}
+                            {renderItem
+                                ? renderItem(item, getOption(item), index)
+                                : (getOption(item).label ?? "")}
                         </div>
                     ))}
 
@@ -388,8 +391,7 @@ function ApiSelect<TResponse, TData>({
                                 }
                             }}
                         >
-                            {"Add"}{" "}
-                            {creating && <LoadingSpinner />}
+                            {"Add"} {creating && <LoadingSpinner />}
                         </Button>
                     )}
 
