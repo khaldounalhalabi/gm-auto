@@ -12,7 +12,9 @@ use Illuminate\Validation\ValidationException;
 
 class MediaCast implements CastsAttributes
 {
+    /** @noinspection PhpUnused */
     public bool $withoutObjectCaching = true;
+    
     private readonly bool $private;
 
     public function __construct(string $privateOrPublic = "public")
