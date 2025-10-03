@@ -18,7 +18,7 @@ class CarFactory extends Factory
         return [
             'model_name' => fake()->word(),
             'car_brand_id' => CarBrand::inRandomOrder()->first()->id,
-            'client_id' => Client::factory(),
+            'client_id' => Client::inRandomOrder()->first()?->id,
             'registration_plate' => fake()->unique()->word(),
         ];
     }

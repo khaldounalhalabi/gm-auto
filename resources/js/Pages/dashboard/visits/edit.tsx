@@ -103,7 +103,11 @@ const Edit = ({ visit }: { visit: Visit }) => {
                         optionValue={"id"}
                         defaultValue={visit?.car}
                         required
-                        onSelect={(v) => v && setClientId(v.id)}
+                        onSelect={(v) => {
+                            if (v) {
+                                setClientId(v.client_id);
+                            }
+                        }}
                     />
                     <div className="md:col-span-2">
                         <Textarea

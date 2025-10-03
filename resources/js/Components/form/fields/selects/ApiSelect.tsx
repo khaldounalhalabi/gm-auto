@@ -123,25 +123,26 @@ function ApiSelect<TResponse, TData>({
         item: TData,
     ) => {
         e.stopPropagation();
+
+        const option = getOption(item);
+        if (isMultiple) {
+            if (include(option, selected)) {
+                setSelected((prev) =>
+                    prev.filter((sel) => !isEqual(sel, option)),
+                );
+            } else {
+                setSelected((prev) => [option, ...prev]);
+            }
+        } else {
+            if (include(option, selected)) {
+                setSelected([]);
+            } else {
+                setSelected([option]);
+            }
+        }
+
         if (onSelect) {
             onSelect(item, selected, setSelected, e);
-        } else {
-            const option = getOption(item);
-            if (isMultiple) {
-                if (include(option, selected)) {
-                    setSelected((prev) =>
-                        prev.filter((sel) => !isEqual(sel, option)),
-                    );
-                } else {
-                    setSelected((prev) => [option, ...prev]);
-                }
-            } else {
-                if (include(option, selected)) {
-                    setSelected([]);
-                } else {
-                    setSelected([option]);
-                }
-            }
         }
 
         if (closeOnSelect) {
@@ -214,6 +215,7 @@ function ApiSelect<TResponse, TData>({
     useEffect(() => {
         if (revalidateKey !== undefined) {
             revalidate();
+            setSelected([]);
         }
     }, [revalidateKey]);
 

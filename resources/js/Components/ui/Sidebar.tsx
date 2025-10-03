@@ -39,12 +39,12 @@ export function Sidebar({
             icon: () => <IconBrand4chan />,
         },
         {
-            title: "Car",
+            title: "Cars",
             href: route("v1.web.protected.cars.index"),
             icon: () => <CarFront />,
         },
         {
-            title: "Visit",
+            title: "Visits",
             href: route("v1.web.protected.visits.index"),
             icon: () => <CalendarIcon />,
         },

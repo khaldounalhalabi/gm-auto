@@ -38,7 +38,7 @@ const Create = () => {
                         type={"date"}
                         onChange={(e) => setData("date", e.target?.value)}
                         required
-                        defaultValue={Date.now()}
+                        defaultValue={new Date().toISOString().split("T")[0]}
                     />
                     <ApiSelect
                         name="client_id"
@@ -63,7 +63,9 @@ const Create = () => {
                         optionValue={"id"}
                         required
                         onSelect={(v) => {
-                            if (v) setClient(v.id);
+                            if (v) {
+                                setClient(v.id);
+                            }
                         }}
                     />
                     <ApiSelect
