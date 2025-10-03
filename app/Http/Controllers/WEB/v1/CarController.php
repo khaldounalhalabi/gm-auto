@@ -74,7 +74,7 @@ class CarController extends WebController
     {
         $car = $this->carService->view($carId, $this->relations);
 
-        if (!$car) {
+        if (! $car) {
             abort(404);
         }
 
@@ -104,8 +104,8 @@ class CarController extends WebController
         return rest()
             ->when(
                 $result,
-                fn($rest) => $rest->ok()->deleteSuccess(),
-                fn($rest) => $rest->noData(),
+                fn ($rest) => $rest->ok()->deleteSuccess(),
+                fn ($rest) => $rest->noData(),
             )->send();
     }
 

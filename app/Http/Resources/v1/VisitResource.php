@@ -3,11 +3,11 @@
 namespace App\Http\Resources\v1;
 
 use App\Http\Resources\BaseResource\BaseResource;
-use App\Models\Car;
+use App\Models\Visit;
 use Illuminate\Http\Request;
 
-/** @mixin Car */
-class CarResource extends BaseResource
+/** @mixin Visit */
+class VisitResource extends BaseResource
 {
     /**
      * Transform the resource into an array.
@@ -17,13 +17,14 @@ class CarResource extends BaseResource
     {
         return [
             'id' => $this->id,
-            'car_brand' => CarBrandResource::make($this->whenLoaded('carBrand')),
+            'car' => CarResource::make($this->whenLoaded('car')),
             'client' => ClientResource::make($this->whenLoaded('client')),
-            'model_name' => $this->model_name,
-            'car_brand_id' => $this->car_brand_id,
+            'date' => $this->date?->format('Y-m-d'),
+            'car_id' => $this->car_id,
             'client_id' => $this->client_id,
-            'registration_plate' => $this->registration_plate,
-            'visits' => VisitResource::collection($this->whenLoaded('visits')),
+            'fault_description' => $this->fault_description,
+            'repair_description' => $this->repair_description,
+            'cost' => $this->cost,
         ];
     }
 }

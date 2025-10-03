@@ -3,28 +3,28 @@
 namespace App\Http\Controllers\WEB\v1;
 
 use App\Http\Controllers\WebController;
-use App\Http\Requests\v1\Client\StoreUpdateClientRequest;
-use App\Http\Resources\v1\ClientResource;
-use App\Models\Client;
-use App\Services\v1\Client\ClientService;
+use App\Http\Requests\v1\Visit\StoreUpdateVisitRequest;
+use App\Http\Resources\v1\VisitResource;
+use App\Models\Visit;
+use App\Services\v1\Visit\VisitService;
 use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class ClientController extends WebController
+class VisitController extends WebController
 {
-    private ClientService $clientService;
+    private VisitService $visitService;
 
     public function __construct()
     {
-        $this->clientService = ClientService::make();
+        $this->visitService = VisitService::make();
         // place the relations you want to return them within the response
-        $this->relations = ['visits'];
+        $this->relations = ['car', 'client'];
     }
 
     public function data()
     {
-        $items = $this->clientService->indexWithPagination($this->relations);
+        $items = $this->visitService->indexWithPagination($this->relations);
 
         return rest()
             ->ok()
@@ -35,33 +35,33 @@ class ClientController extends WebController
 
     public function index()
     {
-        $exportables = Client::getModel()->exportable();
+        $exportables = Visit::getModel()->exportable();
 
-        return Inertia::render('dashboard/clients/index', [
+        return Inertia::render('dashboard/visits/index', [
             'exportables' => $exportables,
         ]);
     }
 
-    public function show($clientId)
+    public function show($visitId)
     {
-        $client = $this->clientService->view($clientId, $this->relations);
+        $visit = $this->visitService->view($visitId, $this->relations);
 
-        return Inertia::render('dashboard/clients/show', [
-            'client' => ClientResource::make($client),
+        return Inertia::render('dashboard/visits/show', [
+            'visit' => VisitResource::make($visit),
         ]);
     }
 
     public function create()
     {
-        return Inertia::render('dashboard/clients/create');
+        return Inertia::render('dashboard/visits/create');
     }
 
-    public function store(StoreUpdateClientRequest $request)
+    public function store(StoreUpdateVisitRequest $request)
     {
-        $client = $this->clientService->store($request->validated(), $this->relations);
-        if ($client) {
+        $visit = $this->visitService->store($request->validated(), $this->relations);
+        if ($visit) {
             return redirect()
-                ->route('v1.web.protected.clients.index')
+                ->route('v1.web.protected.visits.index')
                 ->with('success', trans('site.stored_successfully'));
         }
 
@@ -70,25 +70,25 @@ class ClientController extends WebController
             ->with('error', trans('site.something_went_wrong'));
     }
 
-    public function edit($clientId)
+    public function edit($visitId)
     {
-        $client = $this->clientService->view($clientId, $this->relations);
+        $visit = $this->visitService->view($visitId, $this->relations);
 
-        if (! $client) {
+        if (!$visit) {
             abort(404);
         }
 
-        return Inertia::render('dashboard/clients/edit', [
-            'client' => ClientResource::make($client),
+        return Inertia::render('dashboard/visits/edit', [
+            'visit' => VisitResource::make($visit),
         ]);
     }
 
-    public function update(StoreUpdateClientRequest $request, $clientId)
+    public function update(StoreUpdateVisitRequest $request, $visitId)
     {
-        $client = $this->clientService->update($request->validated(), $clientId, $this->relations);
-        if ($client) {
+        $visit = $this->visitService->update($request->validated(), $visitId, $this->relations);
+        if ($visit) {
             return redirect()
-                ->route('v1.web.protected.clients.index')
+                ->route('v1.web.protected.visits.index')
                 ->with('success', trans('site.update_successfully'));
         }
 
@@ -97,15 +97,15 @@ class ClientController extends WebController
             ->with('error', trans('site.there_is_no_data'));
     }
 
-    public function destroy($clientId)
+    public function destroy($visitId)
     {
-        $result = $this->clientService->delete($clientId);
+        $result = $this->visitService->delete($visitId);
 
         return rest()
             ->when(
                 $result,
-                fn ($rest) => $rest->ok()->deleteSuccess(),
-                fn ($rest) => $rest->noData(),
+                fn($rest) => $rest->ok()->deleteSuccess(),
+                fn($rest) => $rest->noData(),
             )->send();
     }
 
@@ -114,7 +114,7 @@ class ClientController extends WebController
         $ids = $request->ids ?? [];
 
         try {
-            $result = $this->clientService->export($ids);
+            $result = $this->visitService->export($ids);
             session()->flash('success', trans('site.success'));
 
             return $result;
@@ -128,7 +128,7 @@ class ClientController extends WebController
     public function getImportExample()
     {
         try {
-            $result = $this->clientService->getImportExample();
+            $result = $this->visitService->getImportExample();
             session()->flash('success', trans('site.success'));
 
             return $result;
@@ -143,7 +143,7 @@ class ClientController extends WebController
     {
         try {
             $request->validate(['excel_file' => 'required|mimes:xls,xlsx']);
-            $this->clientService->import();
+            $this->visitService->import();
 
             return redirect()
                 ->back()

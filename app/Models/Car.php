@@ -5,22 +5,25 @@ namespace App\Models;
 use Carbon\Carbon;
 use Database\Factories\CarFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property int           $id
- * @property string        $model_name
- * @property int           $car_brand_id
- * @property int           $client_id
- * @property string        $registration_plate
- * @property CarBrand|null $carBrand
- * @property Client|null   $client
- * @property Carbon        $created_at
- * @property Carbon        $updated_at
+ * @property int                            $id
+ * @property string                         $model_name
+ * @property int                            $car_brand_id
+ * @property int                            $client_id
+ * @property string                         $registration_plate
+ * @property CarBrand|null                  $carBrand
+ * @property Client|null                    $client
+ * @property Carbon                         $created_at
+ * @property Carbon                         $updated_at
  * @mixin Builder<Car>
  * @use  HasFactory<CarFactory>
+ * @property EloquentCollection<Visit>|null $visits
  */
 class Car extends Model
 {
@@ -66,14 +69,34 @@ class Car extends Model
     public static function relationsSearchableArray(): array
     {
         return [
-            'carBrand' => ['name', 'image_url'],
-            'client' => ['full_name', 'phone'],
+            'carBrand' => [
+                'name',
+                'image_url'
+            ],
+            'client' => [
+                'full_name',
+                'phone'
+            ],
+            'visits' => [
+                'fault_description',
+                'repair_description',
+            ],
+        ];
+    }
 
+    public function filterArray(): array
+    {
+        return [
+            [
+                'name' => 'client_id',
+                'query' => fn(Builder|Car $builder, $value) => $builder
+                    ->when(isset($value), fn(Builder|Car $query) => $query->where('client_id', $value)),
+            ]
         ];
     }
 
     /**
-     * @return  BelongsTo<CarBrand, static>
+     * @return BelongsTo<CarBrand, static>
      */
     public function carBrand(): BelongsTo
     {
@@ -81,10 +104,18 @@ class Car extends Model
     }
 
     /**
-     * @return  BelongsTo<Client, static>
+     * @return BelongsTo<Client, static>
      */
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);
+    }
+
+    /**
+     * @return  HasMany<Visit, static>
+     */
+    public function visits(): HasMany
+    {
+        return $this->hasMany(Visit::class);
     }
 }

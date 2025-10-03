@@ -11,14 +11,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property int                          $id
- * @property string                       $full_name
- * @property string                       $phone
- * @property Carbon                       $created_at
- * @property Carbon                       $updated_at
+ * @property int                            $id
+ * @property string                         $full_name
+ * @property string                         $phone
+ * @property Carbon                         $created_at
+ * @property Carbon                         $updated_at
  * @mixin Builder<Client>
  * @use  HasFactory<ClientFactory>
- * @property EloquentCollection<Car>|null $cars
+ * @property EloquentCollection<Car>|null   $cars
+ * @property EloquentCollection<Visit>|null $visits
  */
 class Client extends Model
 {
@@ -64,14 +65,26 @@ class Client extends Model
                 'model_name',
                 'registration_plate',
             ],
+            'visits' => [
+                'fault_description',
+                'repair_description',
+            ],
         ];
     }
 
     /**
-     * @return  HasMany<Car, static>
+     * @return HasMany<Car, static>
      */
     public function cars(): HasMany
     {
         return $this->hasMany(Car::class);
+    }
+
+    /**
+     * @return  HasMany<Visit, static>
+     */
+    public function visits(): HasMany
+    {
+        return $this->hasMany(Visit::class);
     }
 }

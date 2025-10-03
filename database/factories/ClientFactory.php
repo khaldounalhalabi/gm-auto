@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Car;
 use App\Models\Client;
+use App\Models\Visit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -22,5 +23,10 @@ class ClientFactory extends Factory
     public function withCars(int $count = 1): static
     {
         return $this->has(Car::factory($count));
+    }
+
+    public function withVisits(int $count = 1): static
+    {
+        return $this->has(Visit::factory($count));
     }
 }

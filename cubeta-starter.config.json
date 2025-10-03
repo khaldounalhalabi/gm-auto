@@ -120,6 +120,63 @@
                 ]
             },
             "version": "v1"
+        },
+        {
+            "model_name": "Visit",
+            "table_name": "visits",
+            "attributes": [
+                {
+                    "name": "date",
+                    "type": "date",
+                    "nullable": false,
+                    "unique": false
+                },
+                {
+                    "name": "car_id",
+                    "type": "key",
+                    "nullable": false,
+                    "unique": false
+                },
+                {
+                    "name": "client_id",
+                    "type": "key",
+                    "nullable": false,
+                    "unique": false
+                },
+                {
+                    "name": "fault_description",
+                    "type": "text",
+                    "nullable": true,
+                    "unique": false
+                },
+                {
+                    "name": "repair_description",
+                    "type": "text",
+                    "nullable": true,
+                    "unique": false
+                }
+            ],
+            "relations": {
+                "belongsTo": [
+                    {
+                        "type": "belongsTo",
+                        "model_name": "Car",
+                        "key": "car_id"
+                    },
+                    {
+                        "type": "belongsTo",
+                        "model_name": "Client",
+                        "key": "client_id"
+                    }
+                ],
+                "hasMany": [
+                    {
+                        "type": "hasMany",
+                        "model_name": "Part"
+                    }
+                ]
+            },
+            "version": "v1"
         }
     ]
 }

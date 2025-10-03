@@ -26,3 +26,9 @@ Route::post('/v1/cars/import', [v1\CarController::class, 'import'])->name('v1.we
 Route::get('/v1/cars/get-import-example', [v1\CarController::class, 'getImportExample'])->name('v1.web.protected.cars.import.example');
 Route::get('/v1/cars/data', [v1\CarController::class, 'data'])->name('v1.web.protected.cars.data');
 Route::resource('/v1/cars', v1\CarController::class)->names('v1.web.protected.cars');
+
+Route::post('/v1/visits/export', [v1\VisitController::class, 'export'])->name('v1.web.protected.visits.export');
+Route::post('/v1/visits/import', [v1\VisitController::class, 'import'])->name('v1.web.protected.visits.import');
+Route::get('/v1/visits/get-import-example', [v1\VisitController::class, 'getImportExample'])->name('v1.web.protected.visits.import.example');
+Route::get('/v1/visits/data', [v1\VisitController::class, 'data'])->name('v1.web.protected.visits.data');
+Route::resource('/v1/visits', v1\VisitController::class)->names('v1.web.protected.visits');
