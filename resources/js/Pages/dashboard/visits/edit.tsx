@@ -11,7 +11,9 @@ import { useForm } from "@inertiajs/react";
 import { ChangeEvent, FormEvent, useState } from "react";
 
 const Edit = ({ visit }: { visit: Visit }) => {
-    const [clientId, setClientId] = useState<undefined | number>(undefined);
+    const [clientId, setClientId] = useState<undefined | number>(
+        visit.client_id,
+    );
     const { post, setData, processing } = useForm<{
         _method?: "PUT" | "POST";
         date: string;
@@ -67,9 +69,14 @@ const Edit = ({ visit }: { visit: Visit }) => {
                         getTotalPages={(data) =>
                             data?.paginate?.total_pages ?? 0
                         }
-                        onChange={(e) =>
-                            setData("client_id", Number(e.target.value))
-                        }
+                        onChange={(e) => {
+                            setData("client_id", Number(e.target.value));
+                            setClientId(
+                                e.target.value
+                                    ? Number(e.target.value)
+                                    : undefined,
+                            );
+                        }}
                         optionLabel={"full_name"}
                         optionValue={"id"}
                         defaultValue={visit?.client}
@@ -96,18 +103,14 @@ const Edit = ({ visit }: { visit: Visit }) => {
                         getTotalPages={(data) =>
                             data?.paginate?.total_pages ?? 0
                         }
-                        onChange={(e) =>
-                            setData("car_id", Number(e.target.value))
-                        }
+                        onChange={(e) => {
+                            setData("car_id", Number(e.target.value));
+                        }}
                         optionLabel={"model_name"}
                         optionValue={"id"}
                         defaultValue={visit?.car}
                         required
-                        onSelect={(v) => {
-                            if (v) {
-                                setClientId(v.client_id);
-                            }
-                        }}
+                        revalidateKey={clientId}
                     />
                     <div className="md:col-span-2">
                         <Textarea

@@ -215,7 +215,6 @@ function ApiSelect<TResponse, TData>({
     useEffect(() => {
         if (revalidateKey !== undefined) {
             revalidate();
-            setSelected([]);
         }
     }, [revalidateKey]);
 
@@ -251,9 +250,11 @@ function ApiSelect<TResponse, TData>({
                 className={`hidden`}
                 onInput={(e: ChangeEvent<HTMLInputElement>) => {
                     if (onChange) {
-                        let arrayValues: [];
+                        let arrayValues: [] = [];
                         try {
-                            arrayValues = JSON.parse(e.target.value);
+                            if (e.target.value) {
+                                arrayValues = JSON.parse(e.target.value);
+                            }
                         } catch (error) {
                             arrayValues = [];
                             console.error("Error in Api Multi select");

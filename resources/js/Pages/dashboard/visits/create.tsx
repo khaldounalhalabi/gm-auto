@@ -56,17 +56,17 @@ const Create = () => {
                         getTotalPages={(data) =>
                             data?.paginate?.total_pages ?? 0
                         }
-                        onChange={(e) =>
-                            setData("client_id", Number(e.target.value))
-                        }
+                        onChange={(e) => {
+                            setData("client_id", Number(e.target.value));
+                            setClient(
+                                e.target.value
+                                    ? Number(e.target.value)
+                                    : undefined,
+                            );
+                        }}
                         optionLabel={"full_name"}
                         optionValue={"id"}
                         required
-                        onSelect={(v) => {
-                            if (v) {
-                                setClient(v.id);
-                            }
-                        }}
                     />
                     <ApiSelect
                         name="car_id"
@@ -105,6 +105,7 @@ const Create = () => {
                         required
                         defaultValue={0}
                         step={"any"}
+                        type={"number"}
                     />
                     <div className="md:col-span-2">
                         <Textarea
