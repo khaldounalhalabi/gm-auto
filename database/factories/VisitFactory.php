@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Car;
 use App\Models\Client;
+use App\Models\Part;
 use App\Models\Visit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -22,5 +23,10 @@ class VisitFactory extends Factory
             'repair_description' => fake()->text(),
             'cost' => fake()->numberBetween(0, 10000)
         ];
+    }
+
+    public function withParts(): VisitFactory
+    {
+        return $this->has(Part::factory());
     }
 }

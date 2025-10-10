@@ -10,7 +10,7 @@ import FilePondPluginFilePoster from "filepond-plugin-file-poster";
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
 import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
 import FilePondPluginImagePreview from "filepond-plugin-image-preview";
-import React from "react";
+import React, { useEffect } from "react";
 import { toast } from "sonner";
 
 const Layout = ({ children }: { children?: React.ReactNode }) => {
@@ -35,6 +35,19 @@ const Layout = ({ children }: { children?: React.ReactNode }) => {
         FilePondPluginFileValidateType,
         FilePondPluginFilePoster,
     );
+
+    useEffect(() => {
+        const handleWheel = (e: WheelEvent) => {
+            if (
+                (document.activeElement as HTMLInputElement)?.type === "number"
+            ) {
+                e.preventDefault();
+            }
+        };
+
+        document.addEventListener("wheel", handleWheel, { passive: false });
+        return () => document.removeEventListener("wheel", handleWheel);
+    }, []);
 
     return (
         <ThemeProvider>

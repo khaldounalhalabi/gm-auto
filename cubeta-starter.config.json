@@ -177,6 +177,44 @@
                 ]
             },
             "version": "v1"
+        },
+        {
+            "model_name": "Part",
+            "table_name": "parts",
+            "attributes": [
+                {
+                    "name": "name",
+                    "type": "string",
+                    "nullable": false,
+                    "unique": false
+                },
+                {
+                    "name": "type",
+                    "type": "string",
+                    "nullable": false,
+                    "unique": false
+                },
+                {
+                    "name": "invoice_number",
+                    "type": "string",
+                    "nullable": true,
+                    "unique": false
+                },
+                {
+                    "name": "source",
+                    "type": "string",
+                    "nullable": true,
+                    "unique": false
+                },
+                {
+                    "name": "notes",
+                    "type": "text",
+                    "nullable": true,
+                    "unique": false
+                }
+            ],
+            "relations": [],
+            "version": "v1"
         }
     ]
 }

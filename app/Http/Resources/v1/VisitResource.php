@@ -17,14 +17,16 @@ class VisitResource extends BaseResource
     {
         return [
             'id' => $this->id,
-            'car' => CarResource::make($this->whenLoaded('car')),
-            'client' => ClientResource::make($this->whenLoaded('client')),
             'date' => $this->date?->format('Y-m-d'),
             'car_id' => $this->car_id,
             'client_id' => $this->client_id,
             'fault_description' => $this->fault_description,
             'repair_description' => $this->repair_description,
+            'total_cost' => $this->total_cost,
             'cost' => $this->cost,
+            'car' => CarResource::make($this->whenLoaded('car')),
+            'client' => ClientResource::make($this->whenLoaded('client')),
+            'parts' => PartResource::collection($this->whenLoaded('parts')),
         ];
     }
 }

@@ -87,6 +87,11 @@ const Index = ({ exportables }: { exportables: string[] }) => {
                     sortable: true,
                 },
                 {
+                    name: "total_cost",
+                    label: "Total Cost",
+                    sortable: true,
+                },
+                {
                     label: "Options",
                     render: (_data, record, setHidden, revalidate) => (
                         <ActionsButtons

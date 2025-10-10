@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->text('fault_description')->nullable();
             $table->text('repair_description')->nullable();
             $table->float('cost')->default(0.0000);
+            $table->float('total_cost')->default(0.0000);
             $table->timestamps();
         });
     }

@@ -7,7 +7,7 @@ import {
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
-    SidebarMenuItem
+    SidebarMenuItem,
 } from "@/Components/ui/shadcn/sidebar";
 import { MiddlewareProps } from "@/types";
 import { Link, usePage } from "@inertiajs/react";

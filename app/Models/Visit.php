@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int         $id
@@ -21,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon      $created_at
  * @property Carbon      $updated_at
  * @property float       $cost
+ * @property float       $total_cost
  * @mixin Builder<Visit>
  * @use  HasFactory<VisitFactory>
  */
@@ -34,7 +36,8 @@ class Visit extends Model
         'client_id',
         'fault_description',
         'repair_description',
-        'cost'
+        'cost',
+        'total_cost',
     ];
 
     protected function casts(): array
@@ -53,7 +56,7 @@ class Visit extends Model
             'car.model_name',
             'client.full_name',
             'part_ids',
-            'cost'
+            'cost',
         ];
     }
 
@@ -74,7 +77,7 @@ class Visit extends Model
     }
 
     /**
-     * @return  BelongsTo<Car, static>
+     * @return BelongsTo<Car, static>
      */
     public function car(): BelongsTo
     {
@@ -82,10 +85,28 @@ class Visit extends Model
     }
 
     /**
-     * @return  BelongsTo<Client, static>
+     * @return BelongsTo<Client, static>
      */
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);
+    }
+
+    public function parts(): HasMany
+    {
+        return $this->hasMany(Part::class);
+    }
+
+    public function updateTotalCost(): bool
+    {
+        $partsCost = $this
+            ->parts()
+            ->get()
+            ->reduce(fn(float|null $carry, Part $part) => ($part->quantity * $part->item_price) + ($carry ?? 0));
+
+        $total = $partsCost + $this->cost;
+        return $this->updateQuietly([
+            'total_cost' => $total,
+        ]);
     }
 }

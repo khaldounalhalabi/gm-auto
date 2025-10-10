@@ -2,16 +2,16 @@
 
 namespace Database\Seeders;
 
-use App\Models\Visit;
+use App\Models\Part;
 use Illuminate\Database\Seeder;
 
-class VisitSeeder extends Seeder
+class PartSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Visit::factory(10)->withParts()->create();
+        Part::factory(10)->create();
     }
 }
