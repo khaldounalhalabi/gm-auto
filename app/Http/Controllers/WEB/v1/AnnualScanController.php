@@ -154,4 +154,20 @@ class AnnualScanController extends WebController
                 ->with('message', trans('site.something_went_wrong'));
         }
     }
+
+    public function getByClient($clientId)
+    {
+        return rest()
+            ->data($this->annualScanService->getByClient($clientId, $this->relations))
+            ->ok()
+            ->getSuccess();
+    }
+
+    public function getByCar($carId)
+    {
+        return rest()
+            ->data($this->annualScanService->getByCar($carId, $this->relations))
+            ->ok()
+            ->getSuccess();
+    }
 }

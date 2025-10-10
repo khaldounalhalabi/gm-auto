@@ -154,4 +154,20 @@ class VisitController extends WebController
                 ->with('message', trans('site.something_went_wrong'));
         }
     }
+
+    public function getByClient($clientId)
+    {
+        return rest()
+            ->data($this->visitService->getByClient($clientId, $this->relations))
+            ->ok()
+            ->getSuccess();
+    }
+
+    public function getByCar($carId)
+    {
+        return rest()
+            ->data($this->visitService->getByCar($carId, $this->relations))
+            ->ok()
+            ->getSuccess();
+    }
 }

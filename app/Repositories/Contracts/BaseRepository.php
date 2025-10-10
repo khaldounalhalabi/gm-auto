@@ -35,6 +35,8 @@ abstract class BaseRepository
 
     private string $tableName;
 
+    protected int $perPage = 10;
+
     public function __construct()
     {
         $this->model = new $this->modelClass;
@@ -53,6 +55,7 @@ abstract class BaseRepository
         }
 
         $this->modelTableColumns = $this->getTableColumns();
+        $this->perPage = request('limit', 10);
     }
 
     public static function make(): static

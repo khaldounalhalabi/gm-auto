@@ -11,4 +11,11 @@ use App\Repositories\Contracts\BaseRepository;
 class CarRepository extends BaseRepository
 {
     protected string $modelClass = Car::class;
+
+    public function getByClient(int $clientId, array $relations = [])
+    {
+        return $this->globalQuery($relations)
+            ->where('client_id', $clientId)
+            ->paginate($this->perPage);
+    }
 }

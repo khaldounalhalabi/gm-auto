@@ -9,6 +9,10 @@ Route::get('/v1/dashboard/me', [v1\BaseAuthController::class, 'userDetails'])->n
 Route::put('/v1/dashboard/me', [v1\BaseAuthController::class, 'updateUserDetails'])->name('v1.web.protected.me.update');
 Route::get('/v1/dashboard/logout', [v1\BaseAuthController::class, 'logout'])->name('v1.web.protected.logout');
 
+Route::get('/v1/clients/{clientId}/visits', [v1\VisitController::class, 'getByClient'])->name('v1.web.protected.clients.visits');
+Route::get('/v1/clients/{clientId}/annual-scans', [v1\AnnualScanController::class, 'getByClient'])->name('v1.web.protected.clients.annual.scans');
+Route::get('/v1/clients/{clientId}/cars', [v1\CarController::class, 'getByClient'])->name('v1.web.protected.clients.cars');
+
 Route::post('/v1/clients/export', [v1\ClientController::class, 'export'])->name('v1.web.protected.clients.export');
 Route::post('/v1/clients/import', [v1\ClientController::class, 'import'])->name('v1.web.protected.clients.import');
 Route::get('/v1/clients/get-import-example', [v1\ClientController::class, 'getImportExample'])->name('v1.web.protected.clients.import.example');
@@ -20,6 +24,9 @@ Route::post('/v1/car-brands/import', [v1\CarBrandController::class, 'import'])->
 Route::get('/v1/car-brands/get-import-example', [v1\CarBrandController::class, 'getImportExample'])->name('v1.web.protected.car.brands.import.example');
 Route::get('/v1/car-brands/data', [v1\CarBrandController::class, 'data'])->name('v1.web.protected.car.brands.data');
 Route::resource('/v1/car-brands', v1\CarBrandController::class)->names('v1.web.protected.car.brands');
+
+Route::get('/v1/cars/{carId}/visits', [v1\VisitController::class, 'getByCar'])->name('v1.web.protected.cars.visits');
+Route::get('/v1/cars/{carId}/annual-scans', [v1\AnnualScanController::class, 'getByCar'])->name('v1.web.protected.cars.annual.scans');
 
 Route::post('/v1/cars/export', [v1\CarController::class, 'export'])->name('v1.web.protected.cars.export');
 Route::post('/v1/cars/import', [v1\CarController::class, 'import'])->name('v1.web.protected.cars.import');

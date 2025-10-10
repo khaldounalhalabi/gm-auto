@@ -16,4 +16,9 @@ class CarService extends BaseService
     use Makable;
 
     protected string $repositoryClass = CarRepository::class;
+
+    public function getByClient(int $clientId, array $relations = [])
+    {
+        return $this->repository->getByClient($clientId, $relations);
+    }
 }

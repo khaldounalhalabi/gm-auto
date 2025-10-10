@@ -154,4 +154,12 @@ class CarController extends WebController
                 ->with('message', trans('site.something_went_wrong'));
         }
     }
+
+    public function getByClient($clientId)
+    {
+        return rest()
+            ->data($this->carService->getByClient($clientId, $this->relations))
+            ->ok()
+            ->getSuccess();
+    }
 }

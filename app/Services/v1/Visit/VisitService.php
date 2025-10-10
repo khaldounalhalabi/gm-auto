@@ -53,4 +53,14 @@ class VisitService extends BaseService
 
         return $visit;
     }
+
+    public function getByClient(int $clientId, array $relations = [])
+    {
+        return $this->repository->getByClient($clientId, $relations);
+    }
+
+    public function getByCar(int $carId, array $relations = [])
+    {
+        return $this->repository->getByCar($carId, $relations);
+    }
 }
