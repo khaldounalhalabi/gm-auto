@@ -9,9 +9,9 @@ import { Link } from "@inertiajs/react";
 const Show = ({ carBrand }: { carBrand: CarBrand }) => {
     return (
         <PageCard
-            title="CarBrand Details"
+            title="Car brand Details"
             actions={
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                     <Link
                         href={route(
                             "v1.web.protected.car.brands.edit",
@@ -23,7 +23,7 @@ const Show = ({ carBrand }: { carBrand: CarBrand }) => {
                 </div>
             }
         >
-            <div className="gap-5 grid grid-cols-1 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                 <SmallTextField label="Name" value={carBrand.name} />
             </div>
             <div className={"md:grid-cols-2"}>

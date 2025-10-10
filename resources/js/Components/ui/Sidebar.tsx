@@ -34,7 +34,7 @@ export function Sidebar({
             icon: () => <UserIcon />,
         },
         {
-            title: "Cars brands",
+            title: "Cars Brands",
             href: route("v1.web.protected.car.brands.index"),
             icon: () => <IconBrand4chan />,
         },

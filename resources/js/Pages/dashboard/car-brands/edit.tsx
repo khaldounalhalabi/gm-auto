@@ -23,10 +23,10 @@ const Edit = ({ carBrand }: { carBrand: CarBrand }) => {
     };
 
     return (
-        <PageCard title="Edit CarBrand">
+        <PageCard title="Edit Car Brand">
             <Form onSubmit={onSubmit} processing={processing}>
                 <div
-                    className={`grid grid-cols-1 md:grid-cols-2 gap-5 items-start`}
+                    className={`grid grid-cols-1 items-start gap-5 md:grid-cols-2`}
                 >
                     <Input
                         name="name"

@@ -7,7 +7,7 @@ import { Link } from "@inertiajs/react";
 const Index = ({ exportables }: { exportables: string[] }) => {
     return (
         <DataTable
-            title="Visit Table"
+            title="Visits"
             createUrl={route("v1.web.protected.visits.create")}
             importRoute={route("v1.web.protected.visits.import")}
             exportRoute={route("v1.web.protected.visits.export")}

@@ -6,7 +6,7 @@ import ActionsButtons from "@/Components/datatable/ActionsButtons";
 const Index = ({ exportables }: { exportables: string[] }) => {
     return (
         <DataTable
-            title="Client Table"
+            title="Clients"
             createUrl={route("v1.web.protected.clients.create")}
             importRoute={route("v1.web.protected.clients.import")}
             exportRoute={route("v1.web.protected.clients.export")}
