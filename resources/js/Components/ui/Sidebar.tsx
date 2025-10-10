@@ -7,12 +7,18 @@ import {
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
-    SidebarMenuItem
+    SidebarMenuItem,
 } from "@/Components/ui/shadcn/sidebar";
 import { MiddlewareProps } from "@/types";
 import { Link, usePage } from "@inertiajs/react";
 import { type Icon, IconBrand4chan } from "@tabler/icons-react";
-import { CalendarArrowDown, CalendarIcon, Car, CarFront, UserIcon } from "lucide-react";
+import {
+    CalendarArrowDown,
+    CalendarIcon,
+    Car,
+    CarFront,
+    UserIcon,
+} from "lucide-react";
 import React from "react";
 
 export function Sidebar({
