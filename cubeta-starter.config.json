@@ -215,6 +215,75 @@
             ],
             "relations": [],
             "version": "v1"
+        },
+        {
+            "model_name": "AnnualScan",
+            "table_name": "annual_scans",
+            "attributes": [
+                {
+                    "name": "client_id",
+                    "type": "key",
+                    "nullable": false,
+                    "unique": false
+                },
+                {
+                    "name": "car_id",
+                    "type": "key",
+                    "nullable": false,
+                    "unique": false
+                },
+                {
+                    "name": "scan_date",
+                    "type": "date",
+                    "nullable": false,
+                    "unique": false
+                },
+                {
+                    "name": "expiry_date",
+                    "type": "date",
+                    "nullable": false,
+                    "unique": false
+                },
+                {
+                    "name": "is_passed",
+                    "type": "boolean",
+                    "nullable": false,
+                    "unique": false
+                },
+                {
+                    "name": "cost",
+                    "type": "float",
+                    "nullable": false,
+                    "unique": false
+                },
+                {
+                    "name": "test_report",
+                    "type": "text",
+                    "nullable": true,
+                    "unique": false
+                },
+                {
+                    "name": "notes",
+                    "type": "text",
+                    "nullable": true,
+                    "unique": false
+                }
+            ],
+            "relations": {
+                "belongsTo": [
+                    {
+                        "type": "belongsTo",
+                        "model_name": "Client",
+                        "key": "client_id"
+                    },
+                    {
+                        "type": "belongsTo",
+                        "model_name": "Car",
+                        "key": "car_id"
+                    }
+                ]
+            },
+            "version": "v1"
         }
     ]
 }

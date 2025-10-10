@@ -12,18 +12,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property int                            $id
- * @property string                         $model_name
- * @property int                            $car_brand_id
- * @property int                            $client_id
- * @property string                         $registration_plate
- * @property CarBrand|null                  $carBrand
- * @property Client|null                    $client
- * @property Carbon                         $created_at
- * @property Carbon                         $updated_at
+ * @property int                                 $id
+ * @property string                              $model_name
+ * @property int                                 $car_brand_id
+ * @property int                                 $client_id
+ * @property string                              $registration_plate
+ * @property CarBrand|null                       $carBrand
+ * @property Client|null                         $client
+ * @property Carbon                              $created_at
+ * @property Carbon                              $updated_at
  * @mixin Builder<Car>
  * @use  HasFactory<CarFactory>
- * @property EloquentCollection<Visit>|null $visits
+ * @property EloquentCollection<Visit>|null      $visits
+ * @property EloquentCollection<AnnualScan>|null $annualScans
  */
 class Car extends Model
 {
@@ -71,15 +72,11 @@ class Car extends Model
         return [
             'carBrand' => [
                 'name',
-                'image_url'
+                'image_url',
             ],
             'client' => [
                 'full_name',
-                'phone'
-            ],
-            'visits' => [
-                'fault_description',
-                'repair_description',
+                'phone',
             ],
         ];
     }
@@ -91,7 +88,7 @@ class Car extends Model
                 'name' => 'client_id',
                 'query' => fn(Builder|Car $builder, $value) => $builder
                     ->when(isset($value), fn(Builder|Car $query) => $query->where('client_id', $value)),
-            ]
+            ],
         ];
     }
 
@@ -112,10 +109,18 @@ class Car extends Model
     }
 
     /**
-     * @return  HasMany<Visit, static>
+     * @return HasMany<Visit, static>
      */
     public function visits(): HasMany
     {
         return $this->hasMany(Visit::class);
+    }
+
+    /**
+     * @return  HasMany<AnnualScan, static>
+     */
+    public function annualScans(): HasMany
+    {
+        return $this->hasMany(AnnualScan::class);
     }
 }

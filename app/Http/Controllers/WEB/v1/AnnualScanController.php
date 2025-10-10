@@ -3,28 +3,28 @@
 namespace App\Http\Controllers\WEB\v1;
 
 use App\Http\Controllers\WebController;
-use App\Http\Requests\v1\Client\StoreUpdateClientRequest;
-use App\Http\Resources\v1\ClientResource;
-use App\Models\Client;
-use App\Services\v1\Client\ClientService;
+use App\Http\Requests\v1\AnnualScan\StoreUpdateAnnualScanRequest;
+use App\Http\Resources\v1\AnnualScanResource;
+use App\Models\AnnualScan;
+use App\Services\v1\AnnualScan\AnnualScanService;
 use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class ClientController extends WebController
+class AnnualScanController extends WebController
 {
-    private ClientService $clientService;
+    private AnnualScanService $annualScanService;
 
     public function __construct()
     {
-        $this->clientService = ClientService::make();
+        $this->annualScanService = AnnualScanService::make();
         // place the relations you want to return them within the response
-        $this->relations = ['visits'];
+        $this->relations = ['client', 'car'];
     }
 
     public function data()
     {
-        $items = $this->clientService->indexWithPagination($this->relations);
+        $items = $this->annualScanService->indexWithPagination($this->relations);
 
         return rest()
             ->ok()
@@ -35,33 +35,33 @@ class ClientController extends WebController
 
     public function index()
     {
-        $exportables = Client::getModel()->exportable();
+        $exportables = AnnualScan::getModel()->exportable();
 
-        return Inertia::render('dashboard/clients/index', [
+        return Inertia::render('dashboard/annual-scans/index', [
             'exportables' => $exportables,
         ]);
     }
 
-    public function show($clientId)
+    public function show($annualScanId)
     {
-        $client = $this->clientService->view($clientId, $this->relations);
+        $annualScan = $this->annualScanService->view($annualScanId, $this->relations);
 
-        return Inertia::render('dashboard/clients/show', [
-            'client' => ClientResource::make($client),
+        return Inertia::render('dashboard/annual-scans/show', [
+            'annualScan' => AnnualScanResource::make($annualScan),
         ]);
     }
 
     public function create()
     {
-        return Inertia::render('dashboard/clients/create');
+        return Inertia::render('dashboard/annual-scans/create');
     }
 
-    public function store(StoreUpdateClientRequest $request)
+    public function store(StoreUpdateAnnualScanRequest $request)
     {
-        $client = $this->clientService->store($request->validated(), $this->relations);
-        if ($client) {
+        $annualScan = $this->annualScanService->store($request->validated(), $this->relations);
+        if ($annualScan) {
             return redirect()
-                ->route('v1.web.protected.clients.index')
+                ->route('v1.web.protected.annual.scans.index')
                 ->with('success', trans('site.stored_successfully'));
         }
 
@@ -70,25 +70,25 @@ class ClientController extends WebController
             ->with('error', trans('site.something_went_wrong'));
     }
 
-    public function edit($clientId)
+    public function edit($annualScanId)
     {
-        $client = $this->clientService->view($clientId, $this->relations);
+        $annualScan = $this->annualScanService->view($annualScanId, $this->relations);
 
-        if (!$client) {
+        if (!$annualScan) {
             abort(404);
         }
 
-        return Inertia::render('dashboard/clients/edit', [
-            'client' => ClientResource::make($client),
+        return Inertia::render('dashboard/annual-scans/edit', [
+            'annualScan' => AnnualScanResource::make($annualScan),
         ]);
     }
 
-    public function update(StoreUpdateClientRequest $request, $clientId)
+    public function update(StoreUpdateAnnualScanRequest $request, $annualScanId)
     {
-        $client = $this->clientService->update($request->validated(), $clientId, $this->relations);
-        if ($client) {
+        $annualScan = $this->annualScanService->update($request->validated(), $annualScanId, $this->relations);
+        if ($annualScan) {
             return redirect()
-                ->route('v1.web.protected.clients.index')
+                ->route('v1.web.protected.annual.scans.index')
                 ->with('success', trans('site.update_successfully'));
         }
 
@@ -97,9 +97,9 @@ class ClientController extends WebController
             ->with('error', trans('site.there_is_no_data'));
     }
 
-    public function destroy($clientId)
+    public function destroy($annualScanId)
     {
-        $result = $this->clientService->delete($clientId);
+        $result = $this->annualScanService->delete($annualScanId);
 
         return rest()
             ->when(
@@ -114,7 +114,7 @@ class ClientController extends WebController
         $ids = $request->ids ?? [];
 
         try {
-            $result = $this->clientService->export($ids);
+            $result = $this->annualScanService->export($ids);
             session()->flash('success', trans('site.success'));
 
             return $result;
@@ -128,7 +128,7 @@ class ClientController extends WebController
     public function getImportExample()
     {
         try {
-            $result = $this->clientService->getImportExample();
+            $result = $this->annualScanService->getImportExample();
             session()->flash('success', trans('site.success'));
 
             return $result;
@@ -143,7 +143,7 @@ class ClientController extends WebController
     {
         try {
             $request->validate(['excel_file' => 'required|mimes:xls,xlsx']);
-            $this->clientService->import();
+            $this->annualScanService->import();
 
             return redirect()
                 ->back()

@@ -24,6 +24,7 @@ class CarResource extends BaseResource
             'client_id' => $this->client_id,
             'registration_plate' => $this->registration_plate,
             'visits' => VisitResource::collection($this->whenLoaded('visits')),
+            'annual_scans' => AnnualScanResource::collection($this->whenLoaded('annualScans')),
         ];
     }
 }

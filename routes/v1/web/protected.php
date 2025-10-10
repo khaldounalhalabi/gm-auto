@@ -32,3 +32,9 @@ Route::post('/v1/visits/import', [v1\VisitController::class, 'import'])->name('v
 Route::get('/v1/visits/get-import-example', [v1\VisitController::class, 'getImportExample'])->name('v1.web.protected.visits.import.example');
 Route::get('/v1/visits/data', [v1\VisitController::class, 'data'])->name('v1.web.protected.visits.data');
 Route::resource('/v1/visits', v1\VisitController::class)->names('v1.web.protected.visits');
+
+Route::post('/v1/annual-scans/export', [v1\AnnualScanController::class, 'export'])->name('v1.web.protected.annual.scans.export');
+Route::post('/v1/annual-scans/import', [v1\AnnualScanController::class, 'import'])->name('v1.web.protected.annual.scans.import');
+Route::get('/v1/annual-scans/get-import-example', [v1\AnnualScanController::class, 'getImportExample'])->name('v1.web.protected.annual.scans.import.example');
+Route::get('/v1/annual-scans/data', [v1\AnnualScanController::class, 'data'])->name('v1.web.protected.annual.scans.data');
+Route::resource('/v1/annual-scans', v1\AnnualScanController::class)->names('v1.web.protected.annual.scans');

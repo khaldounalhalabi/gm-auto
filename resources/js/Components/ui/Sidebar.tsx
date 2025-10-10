@@ -7,12 +7,12 @@ import {
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
-    SidebarMenuItem,
+    SidebarMenuItem
 } from "@/Components/ui/shadcn/sidebar";
 import { MiddlewareProps } from "@/types";
 import { Link, usePage } from "@inertiajs/react";
 import { type Icon, IconBrand4chan } from "@tabler/icons-react";
-import { CalendarIcon, Car, CarFront, UserIcon } from "lucide-react";
+import { CalendarArrowDown, CalendarIcon, Car, CarFront, UserIcon } from "lucide-react";
 import React from "react";
 
 export function Sidebar({
@@ -47,6 +47,11 @@ export function Sidebar({
             title: "Visits",
             href: route("v1.web.protected.visits.index"),
             icon: () => <CalendarIcon />,
+        },
+        {
+            title: "Annual Scans (MOT's)",
+            href: route("v1.web.protected.annual.scans.index"),
+            icon: () => <CalendarArrowDown />,
         },
     ];
 

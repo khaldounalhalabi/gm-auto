@@ -1,3 +1,4 @@
+import AnnualScan from "@/Models/AnnualScan";
 import CarBrand from "@/Models/CarBrand";
 import Client from "@/Models/Client";
 import Visit from "@/Models/Visit";
@@ -10,6 +11,7 @@ interface Car {
     car_brand?: CarBrand;
     client?: Client;
     visits?: Visit[];
+    annual_scans?: AnnualScan[];
 }
 
 export default Car;

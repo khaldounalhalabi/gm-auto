@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\AnnualScan;
 use App\Models\Car;
 use App\Models\Client;
 use App\Models\Visit;
@@ -28,5 +29,10 @@ class ClientFactory extends Factory
     public function withVisits(int $count = 1): static
     {
         return $this->has(Visit::factory($count));
+    }
+
+    public function withAnnualScans(int $count = 1): static
+    {
+        return $this->has(AnnualScan::factory($count));
     }
 }

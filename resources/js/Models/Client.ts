@@ -1,3 +1,4 @@
+import AnnualScan from "@/Models/AnnualScan";
 import Car from "@/Models/Car";
 import Visit from "@/Models/Visit";
 interface Client {
@@ -6,6 +7,7 @@ interface Client {
     phone: string;
     cars?: Car[];
     visits?: Visit[];
+    annual_scans?: AnnualScan[];
 }
 
 export default Client;

@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             CarBrandSeeder::class,
             CarSeeder::class,
             VisitSeeder::class,
+            AnnualScanSeeder::class,
         ]);
     }
 }

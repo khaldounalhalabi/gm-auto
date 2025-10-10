@@ -21,6 +21,7 @@ class ClientResource extends BaseResource
             'phone' => $this->phone,
             'cars' => CarResource::collection($this->whenLoaded('cars')),
             'visits' => VisitResource::collection($this->whenLoaded('visits')),
+            'annual_scans' => AnnualScanResource::collection($this->whenLoaded('annualScans')),
         ];
     }
 }
