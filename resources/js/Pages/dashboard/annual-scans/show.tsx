@@ -8,7 +8,7 @@ import { Button } from "@/Components/ui/shadcn/button";
 const Show = ({ annualScan }: { annualScan: AnnualScan }) => {
     return (
         <PageCard
-            title="AnnualScan Details"
+            title="Annual Scan Details"
             actions={
                 <div className="flex items-center justify-between">
                     <Link

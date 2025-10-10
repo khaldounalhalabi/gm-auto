@@ -8,7 +8,7 @@ import { Badge } from "@/Components/ui/shadcn/badge";
 const Index = ({ exportables }: { exportables: string[] }) => {
     return (
         <DataTable
-            title="AnnualScan Table"
+            title="Annual Scans"
             createUrl={route("v1.web.protected.annual.scans.create")}
             importRoute={route("v1.web.protected.annual.scans.import")}
             exportRoute={route("v1.web.protected.annual.scans.export")}

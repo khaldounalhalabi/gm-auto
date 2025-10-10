@@ -29,7 +29,7 @@ const Create = () => {
     };
 
     return (
-        <PageCard title="Add New AnnualScan">
+        <PageCard title="Add New Annual Scan">
             <Form onSubmit={onSubmit} processing={processing}>
                 <div
                     className={`grid grid-cols-1 items-start gap-5 md:grid-cols-2`}
