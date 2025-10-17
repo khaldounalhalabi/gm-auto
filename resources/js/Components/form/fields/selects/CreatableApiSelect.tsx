@@ -1,4 +1,9 @@
-import { IApiSelectProps, isEqual, isOption, Option } from "@/Components/form/fields/selects/SelectUtils";
+import {
+    IApiSelectProps,
+    isEqual,
+    isOption,
+    Option,
+} from "@/Components/form/fields/selects/SelectUtils";
 import ChevronDown from "@/Components/icons/ChevronDown";
 import LoadingSpinner from "@/Components/icons/LoadingSpinner";
 import XMark from "@/Components/icons/XMark";
