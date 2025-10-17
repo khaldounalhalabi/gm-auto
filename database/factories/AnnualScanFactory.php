@@ -13,10 +13,15 @@ class AnnualScanFactory extends Factory
 {
     public function definition(): array
     {
-        $scanDate = now()->subDays(fake()->numberBetween(0, 10));
+        if (fake()->boolean()) {
+            $scanDate = now()->subDays(fake()->numberBetween(0, 7));
+        } else {
+            $scanDate = now()->subDays(fake()->numberBetween(0, 7))->subYear();
+        }
         $expiryDate = $scanDate->clone()->addYear();
         $client = Client::factory()->withCars(5)->create();
         $car = $client->cars()->inRandomOrder()->first();
+
         return [
             'client_id' => $client->id,
             'car_id' => $car->id,
