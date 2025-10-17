@@ -19,6 +19,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
             Route::middleware(['web', 'locale', 'authenticated:web'])
                 ->group(base_path('routes/v1/web/protected.php'));
+
+            Route::middleware(['web', 'locale', 'authenticated:web'])
+                ->group(base_path('routes/v1/ajax/protected.php'));
+
         }
     )
     ->withMiddleware(function (Middleware $middleware): void {

@@ -5,8 +5,10 @@ import PageCard from "@/Components/ui/PageCard";
 import CarBrand from "@/Models/CarBrand";
 import Client from "@/Models/Client";
 import Http from "@/Modules/Http/Http";
+import HTTP from "@/Modules/Http/Http";
 import { useForm } from "@inertiajs/react";
 import { FormEvent } from "react";
+import CreatableApiSelect from "@/Components/form/fields/selects/CreatableApiSelect";
 
 const Create = () => {
     const { post, setData, processing } = useForm<{
@@ -27,7 +29,7 @@ const Create = () => {
         <PageCard title="Add New Car">
             <Form onSubmit={onSubmit} processing={processing}>
                 <div
-                    className={`grid grid-cols-1 md:grid-cols-2 gap-5 items-start`}
+                    className={`grid grid-cols-1 items-start gap-5 md:grid-cols-2`}
                 >
                     <Input
                         name="model_name"
@@ -45,7 +47,7 @@ const Create = () => {
                         }
                         required
                     />
-                    <ApiSelect
+                    <CreatableApiSelect
                         name="car_brand_id"
                         label={"Brand"}
                         api={(page, search) =>
@@ -70,7 +72,7 @@ const Create = () => {
                         renderItem={(item, option) => (
                             <div
                                 className={
-                                    "flex bg-transparent w-full items-center justify-between"
+                                    "flex w-full items-center justify-between bg-transparent"
                                 }
                             >
                                 <span>{option.label}</span>
@@ -81,6 +83,22 @@ const Create = () => {
                                 />
                             </div>
                         )}
+                        onCreateOption={async (v) => {
+                            const response = await HTTP.make<CarBrand>().post(
+                                route("v1.ajax.protected.cars.brands.store"),
+                                {
+                                    name: v,
+                                },
+                            );
+
+                            if (response.ok() && response.data) {
+                                return response.data;
+                            }
+
+                            throw new Error("Failed to create brand", {
+                                cause: response.message,
+                            });
+                        }}
                     />
                     <ApiSelect
                         name="client_id"
