@@ -1,0 +1,11 @@
+{
+  "resources/js/cubeta-starter.tsx": {
+    "file": "assets/cubeta-starter-DB6Yc9Qy.js",
+    "name": "cubeta-starter",
+    "src": "resources/js/cubeta-starter.tsx",
+    "isEntry": true,
+    "css": [
+      "assets/cubeta-starter-dW4K33iw.css"
+    ]
+  }
+}
