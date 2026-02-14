@@ -1,11 +1,167 @@
 {
+  "_axios-kgqKusg0.js": {
+    "file": "assets/axios-kgqKusg0.js",
+    "name": "axios"
+  },
+  "_axios-legacy-CjaZHaCF.js": {
+    "file": "assets/axios-legacy-CjaZHaCF.js",
+    "name": "axios"
+  },
+  "_filepond-e2TwyZNM.js": {
+    "file": "assets/filepond-e2TwyZNM.js",
+    "name": "filepond"
+  },
+  "_filepond-legacy-Btr3tKVg.js": {
+    "file": "assets/filepond-legacy-Btr3tKVg.js",
+    "name": "filepond"
+  },
+  "_icons-D_RdQV_M.js": {
+    "file": "assets/icons-D_RdQV_M.js",
+    "name": "icons",
+    "imports": [
+      "_react-DmG2rDZQ.js"
+    ]
+  },
+  "_icons-legacy-Hpcc1OPz.js": {
+    "file": "assets/icons-legacy-Hpcc1OPz.js",
+    "name": "icons",
+    "imports": [
+      "_react-legacy-BHHxZauB.js"
+    ]
+  },
+  "_inertia-1mqgV-Bi.js": {
+    "file": "assets/inertia-1mqgV-Bi.js",
+    "name": "inertia",
+    "imports": [
+      "_vendor-BAGHLZrK.js",
+      "_axios-kgqKusg0.js",
+      "_react-DmG2rDZQ.js"
+    ]
+  },
+  "_inertia-legacy-2ADVdWH3.js": {
+    "file": "assets/inertia-legacy-2ADVdWH3.js",
+    "name": "inertia",
+    "imports": [
+      "_vendor-legacy-ZjXz2N7k.js",
+      "_axios-legacy-CjaZHaCF.js",
+      "_react-legacy-BHHxZauB.js"
+    ]
+  },
+  "_notifications-Cy6_46Xf.js": {
+    "file": "assets/notifications-Cy6_46Xf.js",
+    "name": "notifications",
+    "imports": [
+      "_react-DmG2rDZQ.js"
+    ]
+  },
+  "_notifications-legacy-tJ4T7qS6.js": {
+    "file": "assets/notifications-legacy-tJ4T7qS6.js",
+    "name": "notifications",
+    "imports": [
+      "_react-legacy-BHHxZauB.js"
+    ]
+  },
+  "_radix--saKCXiM.js": {
+    "file": "assets/radix--saKCXiM.js",
+    "name": "radix",
+    "imports": [
+      "_react-DmG2rDZQ.js",
+      "_vendor-BAGHLZrK.js"
+    ]
+  },
+  "_radix-legacy-DdMWCHwy.js": {
+    "file": "assets/radix-legacy-DdMWCHwy.js",
+    "name": "radix",
+    "imports": [
+      "_react-legacy-BHHxZauB.js",
+      "_vendor-legacy-ZjXz2N7k.js"
+    ]
+  },
+  "_react-DmG2rDZQ.js": {
+    "file": "assets/react-DmG2rDZQ.js",
+    "name": "react"
+  },
+  "_react-legacy-BHHxZauB.js": {
+    "file": "assets/react-legacy-BHHxZauB.js",
+    "name": "react"
+  },
+  "_tiptap-CLDmY80S.js": {
+    "file": "assets/tiptap-CLDmY80S.js",
+    "name": "tiptap",
+    "imports": [
+      "_react-DmG2rDZQ.js",
+      "_vendor-BAGHLZrK.js"
+    ]
+  },
+  "_tiptap-legacy-DNg9uOj7.js": {
+    "file": "assets/tiptap-legacy-DNg9uOj7.js",
+    "name": "tiptap",
+    "imports": [
+      "_react-legacy-BHHxZauB.js",
+      "_vendor-legacy-ZjXz2N7k.js"
+    ]
+  },
+  "_vendor-BAGHLZrK.js": {
+    "file": "assets/vendor-BAGHLZrK.js",
+    "name": "vendor",
+    "imports": [
+      "_react-DmG2rDZQ.js"
+    ]
+  },
+  "_vendor-legacy-ZjXz2N7k.js": {
+    "file": "assets/vendor-legacy-ZjXz2N7k.js",
+    "name": "vendor",
+    "imports": [
+      "_react-legacy-BHHxZauB.js"
+    ]
+  },
+  "resources/js/cubeta-starter-legacy.tsx": {
+    "file": "assets/cubeta-starter-legacy-lC0fTgm_.js",
+    "name": "cubeta-starter",
+    "src": "resources/js/cubeta-starter-legacy.tsx",
+    "isEntry": true,
+    "imports": [
+      "_react-legacy-BHHxZauB.js",
+      "_inertia-legacy-2ADVdWH3.js",
+      "_vendor-legacy-ZjXz2N7k.js",
+      "_radix-legacy-DdMWCHwy.js",
+      "_icons-legacy-Hpcc1OPz.js",
+      "_notifications-legacy-tJ4T7qS6.js",
+      "_tiptap-legacy-DNg9uOj7.js",
+      "_filepond-legacy-Btr3tKVg.js",
+      "_axios-legacy-CjaZHaCF.js"
+    ]
+  },
   "resources/js/cubeta-starter.tsx": {
-    "file": "assets/cubeta-starter-DB6Yc9Qy.js",
+    "file": "assets/cubeta-starter-j53m3wMl.js",
     "name": "cubeta-starter",
     "src": "resources/js/cubeta-starter.tsx",
     "isEntry": true,
+    "imports": [
+      "_react-DmG2rDZQ.js",
+      "_inertia-1mqgV-Bi.js",
+      "_vendor-BAGHLZrK.js",
+      "_radix--saKCXiM.js",
+      "_icons-D_RdQV_M.js",
+      "_notifications-Cy6_46Xf.js",
+      "_tiptap-CLDmY80S.js",
+      "_filepond-e2TwyZNM.js",
+      "_axios-kgqKusg0.js"
+    ],
     "css": [
-      "assets/cubeta-starter-dW4K33iw.css"
+      "assets/cubeta-starter-CTALKILn.css"
     ]
+  },
+  "vite/legacy-polyfills": {
+    "file": "assets/polyfills-DMZ4Q2yy.js",
+    "name": "polyfills",
+    "src": "vite/legacy-polyfills",
+    "isEntry": true
+  },
+  "vite/legacy-polyfills-legacy": {
+    "file": "assets/polyfills-legacy-DM8juHqP.js",
+    "name": "polyfills",
+    "src": "vite/legacy-polyfills-legacy",
+    "isEntry": true
   }
 }
