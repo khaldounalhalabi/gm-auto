@@ -1,0 +1,126 @@
+# Production Docker Compose stack for Dokploy (and any Docker Compose host).
+# All services live on an internal network; ports are EXPOSED so Dokploy's
+# Traefik reverse-proxy can reach the web service, but nothing is bound to the host.
+#
+# Copy .env.production.example to .env, fill in the secrets and domain, then deploy.
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gm-auto-app
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - app_storage:/var/www/storage
+      - app_bootstrap_cache:/var/www/bootstrap/cache
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - gm-auto
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/up"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gm-auto.rule=Host(`${APP_DOMAIN:-gm-auto.localhost}`)"
+      - "traefik.http.routers.gm-auto.entrypoints=websecure"
+      - "traefik.http.routers.gm-auto.tls.certResolver=letsencrypt"
+      - "traefik.http.routers.gm-auto.service=gm-auto"
+      - "traefik.http.services.gm-auto.loadbalancer.server.port=80"
+
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gm-auto-queue
+    restart: unless-stopped
+    command: php artisan queue:work --sleep=3 --tries=3 --max-time=3600
+    env_file:
+      - .env
+    volumes:
+      - app_storage:/var/www/storage
+      - app_bootstrap_cache:/var/www/bootstrap/cache
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - gm-auto
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gm-auto-scheduler
+    restart: unless-stopped
+    command: >
+      sh -c '
+        while true; do
+          php artisan schedule:run --no-interaction
+          sleep 60
+        done
+      '
+    env_file:
+      - .env
+    volumes:
+      - app_storage:/var/www/storage
+      - app_bootstrap_cache:/var/www/bootstrap/cache
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - gm-auto
+
+  db:
+    image: mariadb:11
+    container_name: gm-auto-db
+    restart: unless-stopped
+    expose:
+      - "3306"
+    env_file:
+      - .env
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - gm-auto
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  redis:
+    image: redis:7-alpine
+    container_name: gm-auto-redis
+    restart: unless-stopped
+    expose:
+      - "6379"
+    networks:
+      - gm-auto
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+networks:
+  gm-auto:
+    driver: bridge
+
+volumes:
+  db_data:
+  app_storage:
+  app_bootstrap_cache:

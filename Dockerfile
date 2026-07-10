@@ -43,16 +43,17 @@ RUN apk add --no-cache \
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Install Redis extension if needed (uncomment if you use Redis)
-# RUN apk add --no-cache autoconf g++ make \
-#     && pecl install redis \
-#     && docker-php-ext-enable redis
+# Install and enable the Redis PHP extension (used for cache/sessions/queues)
+RUN apk add --no-cache --virtual .build-deps autoconf g++ make \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && apk del .build-deps
 
 WORKDIR /var/www
 
 # Copy composer files first for layer caching
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
+RUN composer install --optimize-autoloader --no-interaction --no-scripts
 
 # Copy built assets from node stage
 COPY --from=node-builder /app/public/build ./public/build
@@ -60,11 +61,13 @@ COPY --from=node-builder /app/public/build ./public/build
 # Copy the rest of the app
 COPY . .
 
-# Laravel optimizations
-RUN php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache \
-    && php artisan storage:link \
+# Ensure runtime directories exist and are writable
+RUN mkdir -p storage/framework/cache/data \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/app/public \
+    storage/logs \
+    bootstrap/cache \
     && chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
 # Nginx config
@@ -73,6 +76,11 @@ COPY docker/nginx.conf /etc/nginx/http.d/default.conf
 # Supervisor config to run both PHP-FPM and Nginx
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+# Production entrypoint - caches config at runtime using injected env vars
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint
+RUN chmod +x /usr/local/bin/entrypoint
+
 EXPOSE 80
 
+ENTRYPOINT ["/usr/local/bin/entrypoint"]
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
