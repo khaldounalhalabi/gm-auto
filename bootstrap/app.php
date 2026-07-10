@@ -26,7 +26,10 @@ return Application::configure(basePath: dirname(__DIR__))
         }
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Trust the reverse proxy (Dokploy/Traefik) so Laravel uses the
+        // X-Forwarded-Proto header and generates https URLs behind SSL termination.
+        $middleware->trustProxies(at: env('TRUSTED_PROXIES', '*'));
+
         $middleware->alias([
             'authenticated' => Authenticate::class,
             'locale' => AcceptedLanguagesMiddleware::class,
