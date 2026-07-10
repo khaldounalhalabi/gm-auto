@@ -3,7 +3,6 @@
 use App\Http\Controllers\WEB\v1;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/v1/dashboard/', [v1\DashboardController::class, 'index'])->name('v1.web.protected.index');
 Route::get('/', [v1\DashboardController::class, 'index'])->name('v1.web.protected.index');
 
 Route::get('/v1/dashboard/me', [v1\BaseAuthController::class, 'userDetails'])->name('v1.web.protected.me');
