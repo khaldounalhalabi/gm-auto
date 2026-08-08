@@ -22,6 +22,6 @@ if [ "${RUN_MIGRATIONS:-false}" = "true" ]; then
     php artisan migrate --force
 fi
 
-php artisan octane:frankenphp
+php artisan octane:frankenphp --port=80
 
 exec "$@"
