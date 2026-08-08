@@ -13,7 +13,7 @@ RUN npm run build
 # ============================
 # Pin a specific version, not just "latest", for reproducible builds.
 # Check https://hub.docker.com/r/dunglas/frankenphp/tags for the current stable tag.
-FROM dunglas/frankenphp:1.4-php8.3-alpine
+FROM dunglas/frankenphp:1.7.0-php8.3-alpine
 
 # Install system deps and PHP extensions
 # NOTE: this frankenphp base doesn't ship "nginx" or "supervisor" — FrankenPHP
