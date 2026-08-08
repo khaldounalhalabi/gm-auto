@@ -13,8 +13,11 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# Keep runtime directories writable for the web server user.
-chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/www/public/storage
+# NOTE: no runtime chown here — the container runs as www-data (non-root),
+# which can't chown at all. Ownership is set once at build time in the
+# Dockerfile. If you later mount a volume over storage/, you'll need to
+# either fix perms on the host or switch the Dockerfile back to root +
+# do the chown here instead.
 
 # Run migrations only when explicitly requested. Set RUN_MIGRATIONS=true for the
 # very first deploy, or run migrations manually via the Dokploy UI / CLI.
@@ -22,6 +25,6 @@ if [ "${RUN_MIGRATIONS:-false}" = "true" ]; then
     php artisan migrate --force
 fi
 
-php artisan octane:frankenphp --port=80
-
-exec "$@"
+# exec replaces the shell process with Octane, so it becomes PID 1 and
+# receives SIGTERM directly from Docker/Dokploy for a clean shutdown.
+exec php artisan octane:frankenphp --port=80
