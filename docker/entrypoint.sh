@@ -1,6 +1,18 @@
 #!/bin/sh
 set -e
 
+# Wipe any stale bootstrap cache files before booting artisan at all.
+# If bootstrap/cache/packages.php (or services.php/config.php) references a
+# provider that's no longer in vendor/ (e.g. a package removed by a
+# composer.lock change), booting Laravel to run ANY artisan command -
+# including `package:discover` itself - will crash with a
+# "Class ... not found" error. Plain `rm` doesn't need to boot the
+# framework, so it's the only way to break that chicken-and-egg deadlock.
+rm -f bootstrap/cache/packages.php \
+      bootstrap/cache/services.php \
+      bootstrap/cache/config.php \
+      bootstrap/cache/routes-v7.php
+
 # Create the public/storage symlink if it doesn't exist yet.
 if [ ! -L /var/www/public/storage ]; then
     php artisan storage:link
